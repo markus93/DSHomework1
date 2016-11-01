@@ -9,28 +9,29 @@ import struct
 #
 DEFAULT_SERVER_PORT = 7777
 DEFAULT_SERVER_INET_ADDR = '127.0.0.1'
+RSP_MESSAGE_SIZE = 8
 
 
 # Requests --------------------------------------------------------------------
-__REQ_LIST_FILES = '1'
-__CTR_MSGS = { __REQ_LIST_FILES:'List currently uploaded files'
+REQ_LIST_FILES = '1'
+CTR_MSGS = { REQ_LIST_FILES:'List currently uploaded files'
               }
 # Responses--------------------------------------------------------------------
-__RSP_OK = '0'
-__RSP_BADFORMAT = '1'
-__RSP_MSGNOTFOUND = '2'
-__RSP_UNKNCONTROL = '3'
-__RSP_ERRTRANSM = '4'
-__RSP_CANT_CONNECT = '5'
-__ERR_MSGS = { __RSP_OK:'No Error',
-               __RSP_BADFORMAT:'Malformed message',
-               __RSP_MSGNOTFOUND:'Message not found by iD',
-               __RSP_UNKNCONTROL:'Unknown control code',
-               __RSP_ERRTRANSM:'Transmission Error',
-               __RSP_CANT_CONNECT:'Can\'t connect to server'
+RSP_OK = '0'
+RSP_BADFORMAT = '1'
+RSP_MSGNOTFOUND = '2'
+RSP_UNKNCONTROL = '3'
+RSP_ERRTRANSM = '4'
+RSP_CANT_CONNECT = '5'
+ERR_MSGS = { RSP_OK:'No Error',
+               RSP_BADFORMAT:'Malformed message',
+               RSP_MSGNOTFOUND:'Message not found by iD',
+               RSP_UNKNCONTROL:'Unknown control code',
+               RSP_ERRTRANSM:'Transmission Error',
+               RSP_CANT_CONNECT:'Can\'t connect to server'
                }
 # Field separator for sending multiple values ---------------------------------
-__MSG_FIELD_SEP = ':'
+MSG_FIELD_SEP = ':'
 
 # Common methods --------------------------------------------------------------
 def tcp_send(sock,data):
