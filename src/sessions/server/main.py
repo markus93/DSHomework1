@@ -1,12 +1,11 @@
 from socket import socket, AF_INET, SOCK_STREAM
 from threading import Thread
-import os
 
 from .protocol import *
 
-for dir in (DIRECTORY_FILES, DIRECTORY_USERS):
-    if not os.path.exists(dir):
-        os.makedirs(dir)
+for directory in (DIRECTORY_FILES, DIRECTORY_USERS):
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 
 server_socket = socket(AF_INET, SOCK_STREAM)
 server_socket.bind(('', DEFAULT_SERVER_PORT))

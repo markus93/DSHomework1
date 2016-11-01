@@ -14,8 +14,23 @@ RSP_MESSAGE_SIZE = 8
 
 # Requests --------------------------------------------------------------------
 REQ_LIST_FILES = '1'
-CTR_MSGS = { REQ_LIST_FILES:'List currently uploaded files'
-              }
+REQ_GET_USERS = '2'
+REQ_GET_FILE = '3'
+REQ_MAKE_FILE = '4'
+REQ_GET_LOCK = '5'
+REQ_EDIT_FILE = '6'
+REQ_ADD_EDITOR = '7'
+REQ_REMOVE_EDITOR = '8'
+
+CTR_MSGS = {REQ_LIST_FILES: 'List currently uploaded files',
+            REQ_GET_USERS: 'List user for specified file)',
+            REQ_GET_FILE: 'Return whole file contents',
+            REQ_MAKE_FILE: 'Make a new file, add user as owner',
+            REQ_GET_LOCK: 'Lock the specified line to your user',
+            REQ_EDIT_FILE: 'Edit a line inside a file',
+            REQ_ADD_EDITOR: 'Add an editor to a file owned by you',
+            REQ_REMOVE_EDITOR: 'Remove an editor from a file owned by you'
+}
 # Responses--------------------------------------------------------------------
 RSP_OK = '0'
 RSP_BADFORMAT = '1'
