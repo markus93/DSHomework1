@@ -1,6 +1,5 @@
 from __future__ import print_function
 
-import json
 import os
 from socket import SHUT_RDWR
 import fileinput
@@ -11,12 +10,13 @@ from ..common import *
 DIRECTORY_FILES = '_files'
 DIRECTORY_USERS = '_users'
 
-
+# TODO Error on acquire_lock function
+# TODO implement REQ_ADD_EDITOR, REQ_REMOVE_EDITOR, edit_line
 def client_handler(client_socket, address):
 
     def run():
 
-        request = tcp_recive(client_socket)
+        request = tcp_receive(client_socket)
 
         if request['type'] == REQ_LIST_FILES:
 
@@ -100,25 +100,6 @@ def client_handler(client_socket, address):
     return run
 
 
-def tcp_send(sock, **data):
-
-    assert 'status' in data
-
-    message = json.dumps(data)
-    length_str = str(len(message))
-    length_str = '0'*(RSP_MESSAGE_SIZE - len(length_str)) + length_str
-
-    sock.sendall(length_str + message)
-
-
-def tcp_recive(sock):
-
-    message_size = int(sock.recv(RSP_MESSAGE_SIZE))
-
-    message = sock.recv(message_size)
-    data = json.loads(message)
-
-    return data
 
 
 def list_files(user):

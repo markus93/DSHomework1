@@ -4,7 +4,8 @@ Common variables, methods and structures of the Text Editor modules
 '''
 # Imports----------------------------------------------------------------------
 
-import struct
+import json
+
 # TCP related constants -------------------------------------------------------
 #
 DEFAULT_SERVER_PORT = 7777
@@ -49,35 +50,26 @@ ERR_MSGS = { RSP_OK:'No Error',
 MSG_FIELD_SEP = ':'
 
 # Common methods --------------------------------------------------------------
-def tcp_send(sock,data):
-    '''Send data using TCP socket. Adds message length before message
-    @param sock: TCP socket, used to send/receive
-    @param data: The data to be sent
-    @returns integer,  n bytes sent and error if any
-    @throws socket.error in case of transmission error
-    '''
 
-    # Prefix each message with a 4-byte length (network byte order)
-    msg = struct.pack('>I', len(data)) + data
 
-    sock.sendall(msg)
-    return len(data)
+def tcp_send(sock, **data):
+
+    #assert 'status' in data #TODO Client sends first request without status OR status should be always sent?
+
+    message = json.dumps(data)
+    length_str = str(len(message))
+    length_str = '0'*(RSP_MESSAGE_SIZE - len(length_str)) + length_str
+
+    sock.sendall(length_str + message)
+
+    return len(message)
+
 
 def tcp_receive(sock):
-    # Read message length and unpack it into an integer
-    raw_msglen = recvall(sock, 4)
-    if not raw_msglen:
-        return None
-    msglen = struct.unpack('>I', raw_msglen)[0]
-    # Read the message data
-    return recvall(sock, msglen)
 
-def recvall(sock, n):
-    # Helper function to recv n bytes or return None if EOF is hit
-    data = ''
-    while len(data) < n:
-        packet = sock.recv(n - len(data))
-        if not packet:
-            return None
-        data += packet
+    message_size = int(sock.recv(RSP_MESSAGE_SIZE))
+
+    message = sock.recv(message_size)
+    data = json.loads(message)
+
     return data
