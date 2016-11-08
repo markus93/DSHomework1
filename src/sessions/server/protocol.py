@@ -3,12 +3,17 @@ from __future__ import print_function
 import os
 from socket import SHUT_RDWR
 import fileinput
-
+from Queue import Queue
+from threading import Thread
 
 from ..common import *
 
 DIRECTORY_FILES = '_files'
 DIRECTORY_USERS = '_users'
+
+FILES = dict()
+USERS = dict()
+
 
 # TODO Error on acquire_lock function
 # TODO implement REQ_ADD_EDITOR, REQ_REMOVE_EDITOR, edit_line
@@ -92,7 +97,6 @@ def client_handler(client_socket, address):
         else:
             tcp_send(client_socket, status=RSP_UNKNCONTROL)
 
-
         # Close the connection
         client_socket.shutdown(SHUT_RDWR)
         client_socket.close()
@@ -100,43 +104,35 @@ def client_handler(client_socket, address):
     return run
 
 
-
-
 def list_files(user):
+    """List files, that are available to user.
+    @param user:
+    @type user: str
+    @return: Dictionary, with fields owned_files and available_files
+    @rtype: dict
+    """
 
     owned_files = []
     available_files = []
 
-    for fname in os.listdir(DIRECTORY_USERS):
-        with open(DIRECTORY_USERS + os.sep + fname, 'r') as f:
-
-            # Owner is at the first line
-            file_owner, _ = next(f).strip().split('\t')
-
-            if user == file_owner:
-                owned_files.append(fname)
-
-            for line in f:
-                file_editor, _ = line.strip().split('\t')
-
-                if user == file_editor:
-                    available_files.append(fname)
-                    break
+    for fname, file_handler in FILES.items():
+        if user == file_handler.owner:
+            owned_files.append(file_handler.fname)
+        elif user in file_handler.users.keys():
+            available_files.append(file_handler.fname)
 
     return {'owned_files': owned_files, 'available_files': available_files}
 
 
 def list_users(fname):
+    """Users, who can edit the file
+    @param fname: filename
+    @type fname: str
+    @return: List of usernames
+    @rtype: list
+    """
 
-    users = []
-
-    with open(DIRECTORY_USERS + os.sep + fname, 'r') as f:
-
-        for line in f:
-            file_editor, _ = line.strip().split('\t')
-            users.append(file_editor)
-
-    return users
+    return list(FILES[fname].users.keys())
 
 
 def get_file(fname):
@@ -147,32 +143,85 @@ def get_file(fname):
 
 def make_file(user, fname):
 
-    with open(DIRECTORY_USERS + os.sep + fname, 'w') as f:
-        print('{0}\t-1'.format(user) , file=f)
-
     with open(DIRECTORY_FILES + os.sep + fname, 'w') as f:
         print('', file=f)
 
+    FILES[fname] = FileHandler(fname, user)
+
 
 def acquire_lock(user, fname, line_no):
-
-    with open(DIRECTORY_USERS + os.sep + fname, 'w') as f:
-        for line in f:
-            file_editor, locked_line = line.strip().split('\t')
-
-            if locked_line == line_no:
-
-                return False
-
-    for line in fileinput.input(DIRECTORY_USERS + os.sep + fname, inplace=True):
-        file_editor, locked_line = line.strip().split('\t')
-
-        if file_editor == user:
-            print('{0}\t{1}'.format(user, line_no))
-            break
+    pass
 
 
 def edit_line(user, fname, line_no, line_content, is_new_line=False):
 
-    for i, line in enumerate(fileinput.input(DIRECTORY_USERS + os.sep + fname, inplace=True)):
-        pass
+    FILES[fname].file_changes.add((line_no, line_content, is_new_line, user))
+
+
+class User(Thread):
+
+    def __init__(self, user_socket, name):
+        super(User, self).__init__()
+
+        self.name = name
+        self.socket = user_socket
+        self.notifications = Queue()
+
+    def run(self):
+
+        try:
+
+            while True:
+
+                line_no, line_content, is_new_line = self.notifications.get()
+
+                tcp_send(self.socket, line_no=line_no, line=line_content, is_new_line=is_new_line)
+
+        except KeyboardInterrupt:
+            # TODO: save the stuff
+            pass
+
+
+class FileHandler(Thread):
+
+    def __init__(self, fname, owner, users=None):
+        super(FileHandler, self).__init__()
+
+        if users is None:
+            users = []
+
+        self.fname = fname
+        self.owner = owner
+        self.users = {user.name: user for user in users}
+        self.file_changes = Queue()
+
+    def run(self):
+
+        try:
+
+            while True:
+
+                # TODO: Handle line insertions correctly
+                line_no, line_content, is_new_line, editor = self.file_changes.get()
+
+                with open(os.sep.join(DIRECTORY_FILES, self.fname), 'r+') as f:
+                    lines = f.readlines()
+
+                    if is_new_line:
+                        lines.insert(line_no, line_content)
+                    else:
+                        lines[line_no] = line_content
+
+                    f.seek(0)
+                    f.truncate()
+
+                    f.writelines(lines)
+
+                # Notify users
+                for user_name, user in self.users.items():
+                    if user_name != editor:
+                        user.notifications.add((line_no, line_content, is_new_line))
+
+        except KeyboardInterrupt:
+            # TODO: save the stuff
+            pass

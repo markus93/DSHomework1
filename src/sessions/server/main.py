@@ -1,8 +1,8 @@
+from __future__ import print_function
+
 from socket import socket, AF_INET, SOCK_STREAM
-from threading import Thread
 
 from .protocol import *
-
 
 # Info-------------------------------------------------------------------------
 
@@ -12,8 +12,11 @@ ___DESC = 'Collaborative Text Editor'
 ___BUILT = '2016-11-23'
 ___VENDOR = 'Copyright (c) 2016 DSLab'
 
+
 def __info():
     return '%s version %s (%s) %s' % (___NAME, ___VER, ___BUILT, ___VENDOR)
+
+# Main-------------------------------------------------------------------------
 
 
 def server_main(args):
@@ -22,9 +25,11 @@ def server_main(args):
         if not os.path.exists(directory):
             os.makedirs(directory)
 
+    # TODO: populate FILES and USERS
+
     server_socket = socket(AF_INET, SOCK_STREAM)
-    server_socket.bind(('', int(args.listenport))) #Port from arguments (default 7777)
-    server_socket.listen(5) # Might change
+    server_socket.bind(('', int(args.listenport)))  # Port from arguments (default 7777)
+    server_socket.listen(5)  # Might change
 
     while True:
 
