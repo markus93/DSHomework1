@@ -1,8 +1,10 @@
 
-from tkinter import *
+
+from Tkinter import *
 import ScrolledText
 import tkFileDialog
 import os
+from sessions.client.main import *
 import tkMessageBox
 textPad = None
 user = None
@@ -13,23 +15,23 @@ class app:
         def newappwindow(self,username):
                 global textPad
                 global user
-        
+
                 #initialize username
                 user = username
                 #call get_files function and retrieve files from server
-                self.error, self.userfiles[], self.memberfiles[] = get_files(username)
+                self.error, self.userfiles, self.memberfiles = get_files(username)
                 self.window = Toplevel()
                 self.window.geometry('700x300')
                 textPad = ScrolledText.ScrolledText(self.window, width=400, height=100)
                 self.window.title('Welcome back '+str(user))
-`       
+
                 #create menu option for client
                 menu = Menu(self.window)
                 self.window.config(menu=menu)
                 filemenu = Menu(menu)
                 menu.add_cascade(label="File", menu=filemenu)
                 filemenu.add_command(label="New", command=self.new_file)
- 
+
                 filemenu.add_command(label="Member Files...", command=self.member)
                 filemenu.add_command(label="Master Files..", command=self.master)
                 filemenu.add_command(label="Save", command=self.save_command)
@@ -38,40 +40,44 @@ class app:
                 helpmenu = Menu(menu)
                 menu.add_cascade(label="Help", menu=helpmenu)
                 helpmenu.add_command(label="About...", command=self.about_command)
-        
+
                 textPad.pack()
                 self.window.mainloop()
-                
-        def open_command(self,filename):
+
+        def open(self,filename):
                 global currentfile
                 global window
                 textPad
                 textPad.delete('1.0',END)
+                error, content,q = open_file(user,filename)
+                if error == "":
+                    textPad.insert(content)
+
                 #initialize queue and start reading from server
-                
-         #open new view to input file name      
+
+         #open new view to input file name
         def new_file(self):
                 newfile = createFile()
                 newfile.newfileview(user)
-        #close connection        
+        #close connection
         def exit_command(self):
 
                 if tkMessageBox.askokcancel("Quit", "Do you really want to quit?"):
-                stop_listening()
-                
+                    stop_listening()
+
         def about_command(self):
-                label = tkMessageBox.showinfo("About", "Home work for Distributed Sytstem (2016)")
+                label = tkMessageBox.showinfo("About", "Home work for Distributed Systems (2016)")
                 self.window.destroy()
-                
-        #open files that user can edit       
+
+        #open files that user can edit
         def member(self):
                 if len(self.memberfiles):
                         label = tkMessageBox.showinfo("Error message", "No file to open")
                 else :
                         callview = view()
                         callview.views(self.memberfiles,user,'member')
-                        
-         #list files that user can invite and delete client       
+
+         #list files that user can invite and delete client
         def master(self):
                 if len(self.userfiles):
                         label = tkMessageBox.showinfo("Error message", "You do not own any file at this moment")
@@ -87,15 +93,15 @@ class view:
         self.list_box_1.grid(row=0, column=0)
         self.list_box_1.pack()
         #if usertype is master, then user can delete files
-        
+
         if type == "master":
             self.delete_button = Button(self.root, text="Delete", command=self.DeleteSelection)
             self.delete_button.pack(side="right")
-            
+
         #universal menu for both master and member
         self.back_button = Button(self.root, text="<Back", command=self.Close)
         self.back_button.pack(side="left")
-        
+
         self.open_button = Button(self.root, text="[Open File]", command=self.Selected)
         # self.open_button.grid(row=1, col=0)
         self.open_button.pack(side='left')
@@ -110,7 +116,7 @@ class view:
         selected_file = self.list_box_1.get(index)
         if tkMessageBox.askokcancel("Open file", "Do you really want to open file %s?" %selected_file):
             openfile = app()
-            openfile.open_command(seltext)
+            openfile.open(selected_file)
             self.root.destroy()
 
     def DeleteSelection(self):
@@ -140,6 +146,9 @@ class createFile():
         #send file to server and create file
         #if successfull, go to view
         print 'create file'
+
+
+
 
 
     
