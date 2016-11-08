@@ -13,12 +13,17 @@ def input(parent, label, width=None, **options)
     if width:
       entry.pack(side=TOP, padx=10, fill=BOTH)
       return entry
+    
+def displaywindow():
+    username = user.get()
+    displayapp = appwindow.app()
+    displayapp.newappwindow(username)
 
 parent = Frame(root, padx=10, pady=10)
 parent.pack(fill=BOTH, expand=True)
 
 user = input(parent, "Username:", 16, show='*')
-login_button = Button(parent, borderwidth=4, text="Login", width=10, pady=8, command=authorize_user)
+login_button = Button(parent, borderwidth=4, text="Login", width=10, pady=8, command=displaywindow)
 
 login_button.pack(side=BOTTOM)
 
