@@ -1,9 +1,5 @@
-
-
 from Tkinter import *
 import ScrolledText
-import tkFileDialog
-import os
 from sessions.client.main import *
 import tkMessageBox
 textPad = None
@@ -20,6 +16,7 @@ class app:
                 user = username
                 #call get_files function and retrieve files from server
                 self.error, self.userfiles, self.memberfiles = get_files(username)
+
                 self.window = Toplevel()
                 self.window.geometry('700x300')
                 textPad = ScrolledText.ScrolledText(self.window, width=400, height=100)
@@ -49,9 +46,10 @@ class app:
                 global window
                 textPad
                 textPad.delete('1.0',END)
-                error, content,q = open_file(user,filename)
+                error, contents = open_file(user,filename)
                 if error == "":
-                    textPad.insert(content)
+                    textPad.insert('1.0', contents)
+                    currentfile = filename
 
                 #initialize queue and start reading from server
 
@@ -89,14 +87,18 @@ class view:
     def views(self,files,username,type):
         self.username = username
         self.root = Tk()
+        self.type =type
+        self.files = files
         self.list_box_1 = Listbox(self.root, width=100, height=20, selectmode=EXTENDED)
         self.list_box_1.grid(row=0, column=0)
         self.list_box_1.pack()
         #if usertype is master, then user can delete files
 
-        if type == "master":
+        if self.type == "master":
             self.delete_button = Button(self.root, text="Delete", command=self.DeleteSelection)
             self.delete_button.pack(side="right")
+            self.editor_button = Button(self.root, text="[Editor Review]", command=self.EditorSelection)
+            self.editor_button.pack(side="right")
 
         #universal menu for both master and member
         self.back_button = Button(self.root, text="<Back", command=self.Close)
@@ -106,7 +108,7 @@ class view:
         # self.open_button.grid(row=1, col=0)
         self.open_button.pack(side='left')
         #list files in list
-        for item in files:
+        for item in self.files:
             self.list_box_1.insert(END, item)
         self.root.mainloop()
 
@@ -127,6 +129,17 @@ class view:
             self.list_box_1.delete(idx, idx)
             pos = pos + 1
             #send file update to server
+
+    def EditorSelection(self):
+        try:
+            index = self.list_box_1.curselection()[0]
+            selected_file = self.list_box_1.get(index)
+            self.root.destroy()
+            callEditor = Editor()
+            callEditor.Editor_view(self.username,self.files,selected_file,self.type)
+        except:
+            print "nothing selected"
+
     def Close(self):
 
         self.root.destroy()
@@ -137,18 +150,100 @@ class createFile():
 
     def newfileview(self,username):
         fileview = Tk()
-        Label(fileview, text = "Create New FIle").grid(row=0)
+        Label(fileview, text = "Create New FIle, you will be the master of this file").grid(row=0)
         self.filename = Entry(fileview)
         self.filename.grid(row=0, column=1)
         Button(fileview, text='Create File', command=self.create).grid(row=3, column=1, sticky=W, pady=4)
 
     def create(self):
-        #send file to server and create file
-        #if successfull, go to view
-        print 'create file'
+        file = (self.filename.get().split(".")[0])
+        file = file.replace(" ", "")
+
+        if file != "":
+            error_message = create_file(self.username,file+".txt")
+            if error_message == "":
+                openfile = app()
+                openfile.open(file+".txt")
+            else:
+                Label = tkMessageBox.showinfo("Error", "Error occurred while creating file")
+        else:
+            Label = tkMessageBox.showinfo("Error", "Invalid Text Input")
+
+        print file
+
+
+
+
+class Editor():
+
+    def Editor_view(self,username,files,selected_file,type):
+        self.username = username
+        self.files = files
+        self.selected_file = selected_file
+        self.type = type
+        self.root = Tk()
+        self.list_box_1 = Listbox(self.root, width=50, height=20, selectmode=EXTENDED)
+        self.list_box_1.grid(row=0, column=0)
+        self.root.title('Control Editor for  ' + self.selected_file)
+        self.list_box_1.pack(side = "left")
+        self.list_box_2 = Listbox(self.root, width=50, height=20, selectmode=EXTENDED)
+        self.list_box_2.grid(row=0, column=0)
+        self.list_box_2.pack(side = "right")
+        #get all users
+        self.all_users = get_all_users()
+        #get editors for this files
+        error_message,self.editors = get_editors(self.selected_file)
+        if error_message != "":
+            self.editors= list()
+
+        self.back_button = Button(self.root, text="back", command=self.back)
+        self.back_button.place(relx=0.5, rely=0.9, anchor=CENTER)
+        self.add_button = Button(self.root, text="Add Editor >", command=self.Selected)
+        self.add_button.place(relx=0.5, rely=0.5, anchor=CENTER)
+        self.remove_button = Button(self.root, text=" < Remove Editor ", command=self.DeleteSelection)
+        self.remove_button.place(relx=0.5, rely=0.4, anchor=CENTER)
+        self.populate(self.all_users,self.list_box_1)
+        self.populate(self.editors, self.list_box_2)
+        self.root.mainloop()
+    def populate(self,input,name):
+        for item in input:
+           name.insert(END,item)
+
+
+    def Selected(self):
+        index = self.list_box_1.curselection()[0]
+        seltext = self.list_box_1.get(index)
+        if tkMessageBox.askokcancel("Message", "Do you want to give this user Editor right %s?" % seltext):
+            message = add_editor(self.selected_file,seltext)
+            if message == "":
+                self.editors.insert(0,seltext)
+                self.list_box_2.insert(END,seltext)
+            else:
+                Label = tkMessageBox.showinfo("Error", "Error occured")
+
+    def DeleteSelection(self):
+        items = self.list_box_2.curselection()
+        pos = 0
+        index = self.list_box_2.curselection()[0]
+        seltext = self.list_box_2.get(index)
+        if tkMessageBox.askokcancel("Message", "Are you sure you want to remove user %s?" % seltext):
+            message = remove_editor(self.selected_file,seltext)
+            if message == "":
+                for i in items:
+                    idx = int(i) - pos
+                    self.list_box_2.delete(idx, idx)
+                    pos = pos + 1
+            else:
+                Label = tkMessageBox.showinfo("Error", "Error occured")
+    def back(self):
+        self.root.destroy()
+        callview = view()
+        callview.views(self.files, self.username, self.type)
+
+
+loadEditor = Editor()
 
 
 
 
 
-    
