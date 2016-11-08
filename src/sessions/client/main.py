@@ -2,8 +2,9 @@
 
 # Import------------------------------------------------------------------------
 
-from sessions.client.protocol import get_files_req, get_editors_req, create_file_req, open_file_req,\
-    add_editor_req, send_new_edit_req, lock_line_req
+from sessions.client.protocol import *
+from Queue import Queue
+from threading import Thread
 
 # Info-------------------------------------------------------------------------
 
@@ -16,7 +17,8 @@ ___VENDOR = 'Copyright (c) 2016 DSLab'
 # Variables
 
 server = '127.0.0.1', 7777
-
+listen_socket = None
+threadListen = None
 
 def __info():
     return '%s version %s (%s) %s' % (___NAME, ___VER, ___BUILT, ___VENDOR)
@@ -39,7 +41,7 @@ def client_test():
     print "Error: " + str(err) + ", owned files: " + str(own) + ", available files: " + str(avb)
 
     #Get file content
-    err, file = open_file('test', own[0])
+    err, file, queue = open_file('test', own[0])
     print "Error: " + str(err) + ", file content: " + str(file)
 
     #Lock certain line for editing
@@ -52,6 +54,8 @@ def client_test():
 
     err, file = open_file('test', own[0])
     print str(err) + " file content: " + str(file)
+
+    #stop_listening()
 
 
 def get_files(user):
@@ -88,11 +92,19 @@ def open_file(user, fname):
     @param fname: string, filename
     @returns tuple ( string:err_description, string:file_content)
     '''
-    global server
+    global server, listen_socket, threadListen
 
-    #TODO also start listening for edits for given file (on separate thread)
-    #TODO empty previous q and start putting new edits to queue
-    return open_file_req(server, user, fname)
+    #Closes previous listening session TODO is old thread closed?
+    if listen_socket != None:
+        stop_listening()
+
+    err, file_cont, listen_socket = open_file_req(server, user, fname)
+    q = Queue();
+
+    #threadListen = Thread(target=listen_for_edits(server, listen_socket, q))
+    #threadListen.start() #TODO problem with listening
+
+    return err, file_cont, q
 
 
 #Not yet implemented by server side
@@ -103,7 +115,7 @@ def add_editor(fname, edname):
     @returns string:err_description
     '''
     global server
-    return add_editor_req(server, edname, fname)
+    return add_editor_req(server, fname, edname)
 
 
 #Not yet implemented by server side
@@ -118,7 +130,7 @@ def remove_editor(fname, edname):
 
 
 #Not yet implemented by server side
-def send_new_edit(user, fname, line_no, line_content, is_new_line = False):
+def send_new_edit(user, fname, line_no, line_content, is_new_line=False):
     '''Send new edit to server (overwrites the line
     @param user: string, username
     @param fname: string, filename
@@ -142,9 +154,11 @@ def lock_line(user, fname, line_no):
     return lock_line_req(server, user, fname, line_no)
 
 
-def __listen_for_edits():
-    pass
-
-
-def disconnect():
-    pass
+def stop_listening():
+    '''
+    Disconnects from server (listening socket)
+    '''
+    global listen_socket
+    disconnect(listen_socket)
+    listen_socket = None
+    #TODO clear queue?
