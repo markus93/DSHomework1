@@ -1,0 +1,22 @@
+
+from tkinter import *
+import ScrolledText
+import tkFileDialog
+import os
+import tkMessageBox
+textPad = None
+user = None
+currentfile = None
+
+
+class app:
+        def newappwindow(self,username):
+        global textPad
+        global user
+        user = username
+        self.file = ['chem_data.txt','chem_data2.txt','show.txt','file2.txt','file3.txt']
+        self.list = {'name': 'Zed', 'age': 39, 'height': 6 * 12 + 2}
+        self.window = Toplevel()
+        self.window.geometry('700x300')
+        textPad = ScrolledText.ScrolledText(self.window, width=400, height=100)
+        self.window.title('Welcome back '+str(user))
