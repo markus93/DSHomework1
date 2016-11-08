@@ -22,8 +22,7 @@ class ServerException(Exception):
 
 
 def client_handler(client_socket):
-    """
-
+    """Handle any request made by the client
     @param client_socket:
     @type client_socket: socket.socket
     @return:
@@ -140,8 +139,8 @@ def client_handler(client_socket):
                 tcp_send(client_socket, status=RSP_UNKNCONTROL)
 
         except ServerException as e:
-            LOG.warning('Exception happened during handling the request: {0}'.format(e.args))
-            tcp_send(client_socket, status=RSP_BADFORMAT, error_message=e.args)
+            LOG.warning('Exception happened during handling the request: {0}'.format(e.message))
+            tcp_send(client_socket, status=RSP_BADFORMAT, error_message=e.message)
 
         if request['type'] != REQ_GET_FILE:
             client_socket.shutdown(SHUT_RDWR)
@@ -158,7 +157,7 @@ def list_files(user):
     @rtype: dict[str, list[str]]
     """
 
-    LOG.debug('Listing files, that are available to {0}'.format(user))
+    LOG.info('Listing files, that are available to {0}'.format(user))
 
     owned_files = []
     available_files = []
@@ -186,17 +185,18 @@ def list_users(user, fname):
         LOG.warning('{0} was trying to access editors of {1} without permissions'.format(user, fname))
         raise ServerException('Must be owner to see editors')
 
-    LOG.debug('Listing users for {0}'.format(fname))
+    LOG.info('Listing users for {0}'.format(fname))
     return FILES[fname].users
 
 
 def get_file(user, fname):
-    """
+    """Return the whole file content, this request is made once per user at the start of the session.
+    An long lived TCP is also made turing this request. (see client_handler)
     @param user: Request makers name
     @type user: str
     @param fname: Filename, whose content is requested
     @type fname: str
-    @return:
+    @return: Contents of the file
     @rtype: str
     """
 
@@ -205,12 +205,12 @@ def get_file(user, fname):
         raise ServerException('Don\'t have rights to access {0}'.format(fname))
 
     with open(DIRECTORY_FILES + os.sep + fname, 'r') as f:
+        LOG.info('{0}-s content was given to {1}'.format(fname, user))
         return f.read()
 
 
 def make_file(user, fname):
-    """
-
+    """Make new file, user is marked as owner.
     @param user:
     @type user: str
     @param fname:
@@ -220,6 +220,7 @@ def make_file(user, fname):
     """
 
     if fname in FILES:
+        LOG.warning('{0} tried to make file with an existing name: {1}'.format(user, fname))
         raise ServerException('File {0} already exists'.format(fname))
 
     with open(DIRECTORY_FILES + os.sep + fname, 'w') as f:
@@ -228,30 +229,32 @@ def make_file(user, fname):
     FILES[fname] = FileHandler(fname, user)
     FILES[fname].start()
 
+    LOG.info('{0} made a new file: {1}'.format(user, fname))
+
 
 def acquire_lock(user, fname, line_no):
-    """
-
+    """Acquire lock for a line in a file.
     @param user:
     @type user: str
     @param fname:
     @type fname: str
     @param line_no:
     @type line_no: int
-    @return:
+    @return: Was the lock successfully made?
     @rtype: bool
     """
 
     if FILES[fname].locks.get(line_no, user) != user:
+        LOG.info('{0} failed to acquire a lock in {1} for line {2}'.format(user, fname, line_no))
         return False
 
     FILES[fname].locks[line_no] = user
+    LOG.info('{0} acquired a lock in {1} for line {2}'.format(user, fname, line_no))
     return True
 
 
 def edit_line(user, fname, line_no, line_content, is_new_line=False):
-    """
-
+    """Edit a line in a file, the edit request is added to a queue.
     @param user:
     @type user: str
     @param fname:
@@ -262,20 +265,22 @@ def edit_line(user, fname, line_no, line_content, is_new_line=False):
     @type line_content: str
     @param is_new_line:
     @type is_new_line: bool
-    @return:
+    @return: True on success
     @rtype: bool
     """
 
     if FILES[fname].owner != user and user not in FILES[fname].users:
+        LOG.warning('{0} was trying to access {1} without permissions'.format(user, fname))
         raise ServerException('Don\'t have rights to access {0}'.format(fname))
 
     FILES[fname].file_changes.put((line_no, line_content, is_new_line, user))
+    LOG.info('File change request was made by {0} for {1}'.format(user, fname))
 
     return True
 
 
 def add_editor(user, fname, editor):
-    """
+    """Give editing rights to a user.
     @param user:
     @type user: str
     @param fname:
@@ -287,14 +292,16 @@ def add_editor(user, fname, editor):
     """
 
     if FILES[fname].owner != user:
+        LOG.warning('{0} was trying to access editors of {1} without permissions'.format(user, fname))
         raise ServerException('Must be owner to change editors')
 
     if user not in FILES[fname].users:
         FILES[fname].users.append(editor)
+        LOG.info('{0} made {1} an editor of {2}'.format(user, editor, fname))
 
 
 def remove_editor(user, fname, editor):
-    """
+    """Remove editing rights from a user.
     @param user:
     @type user: str
     @param fname:
@@ -306,9 +313,12 @@ def remove_editor(user, fname, editor):
     """
 
     if FILES[fname].owner != user:
+        LOG.warning('{0} was trying to access editors of {1} without permissions'.format(user, fname))
         raise ServerException('Must be owner to change editors')
 
-    FILES[fname].users.remove(editor)
+    if user in FILES[fname].users:
+        FILES[fname].users.remove(editor)
+        LOG.info('{0} removed {1} from editors of {2}'.format(user, editor, fname))
 
 
 class User(Thread):
