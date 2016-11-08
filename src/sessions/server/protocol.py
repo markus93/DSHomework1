@@ -4,11 +4,12 @@ import os
 from socket import SHUT_RDWR
 from Queue import Queue, Empty
 from threading import Thread
+import cPickle as pickle
 
 from ..common import *
 
 DIRECTORY_FILES = '_files'
-DIRECTORY_USERS = '_users'
+DIRECTORY_OBJECTS = '_objects'
 
 FILES = dict()
 """@type: dict[str, FileHandler]"""
@@ -69,7 +70,6 @@ def client_handler(client_socket):
 
                     USERS[request['user']] = User(client_socket, request['user'])
                     USERS[request['user']].start()
-                    FILES[request['fname']].users.append(request['user'])
 
             elif request['type'] == REQ_MAKE_FILE:
 
@@ -140,6 +140,7 @@ def client_handler(client_socket):
                 tcp_send(client_socket, status=RSP_UNKNCONTROL)
 
         except ServerException as e:
+            LOG.warning('Exception happened during handling the request: {0}'.format(e.args))
             tcp_send(client_socket, status=RSP_BADFORMAT, error_message=e.args)
 
         if request['type'] != REQ_GET_FILE:
@@ -156,6 +157,8 @@ def list_files(user):
     @return: Dictionary, with fields owned_files and available_files
     @rtype: dict[str, list[str]]
     """
+
+    LOG.debug('Listing files, that are available to {0}'.format(user))
 
     owned_files = []
     available_files = []
@@ -180,8 +183,10 @@ def list_users(user, fname):
     """
 
     if FILES[fname].owner != user:
+        LOG.warning('{0} was trying to access editors of {1} without permissions'.format(user, fname))
         raise ServerException('Must be owner to see editors')
 
+    LOG.debug('Listing users for {0}'.format(fname))
     return FILES[fname].users
 
 
@@ -196,6 +201,7 @@ def get_file(user, fname):
     """
 
     if FILES[fname].owner != user and user not in FILES[fname].users:
+        LOG.warning('{0} was trying to access {1} without permissions'.format(user, fname))
         raise ServerException('Don\'t have rights to access {0}'.format(fname))
 
     with open(DIRECTORY_FILES + os.sep + fname, 'r') as f:
@@ -283,7 +289,8 @@ def add_editor(user, fname, editor):
     if FILES[fname].owner != user:
         raise ServerException('Must be owner to change editors')
 
-    FILES[fname].users.append(editor)
+    if user not in FILES[fname].users:
+        FILES[fname].users.append(editor)
 
 
 def remove_editor(user, fname, editor):
@@ -329,14 +336,14 @@ class User(Thread):
                 line_no, line_content, is_new_line = self.notifications.get(timeout=1)
 
                 tcp_send(self.socket, line_no=line_no, line=line_content, is_new_line=is_new_line)
+                LOG.info('User {0} notified of the change at line {1}'.format(self.name, line_no))
 
             except Empty:
-                # LOG.debug('Empty que at user {0}'.format(self.name))
+                # LOG.debug('Empty queue at user {0}'.format(self.name))
                 pass
 
         self.socket.shutdown(SHUT_RDWR)
         self.socket.close()
-        # TODO: save
 
 
 class FileHandler(Thread):
@@ -370,6 +377,7 @@ class FileHandler(Thread):
             try:
                 # TODO: Handle line insertions correctly
                 line_no, line_content, is_new_line, editor = self.file_changes.get(timeout=1)
+                LOG.info('Line {0} edited in {1} (is_new_line = {2})'.format(line_no, self.fname, is_new_line))
 
                 with open(os.sep.join((DIRECTORY_FILES, self.fname)), 'r+') as f:
                     lines = f.readlines()
@@ -392,11 +400,17 @@ class FileHandler(Thread):
 
                 # Notify users
                 for user_name in self.users:
-                    if user_name != editor:
+                    if user_name != editor and user_name in USERS:
                         USERS[user_name].notifications.put((line_no, line_content, is_new_line))
 
             except Empty:
-                # LOG.debug('Empty que at file {0}'.format(self.fname))
+                # LOG.debug('Empty queue at file {0}'.format(self.fname))
                 pass
 
-                # TODO: save the stuff
+        # Save the FileHandler
+        self._is_running = True
+        self.file_changes = None
+        pickle.dump(self, open(os.sep.join((DIRECTORY_OBJECTS, self.fname)), 'wb'))
+
+    def __reduce__(self):
+        return FileHandler, (self.fname, self.owner, self.users)
