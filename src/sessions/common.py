@@ -5,6 +5,13 @@ Common variables, methods and structures of the Text Editor modules
 # Imports----------------------------------------------------------------------
 
 import json
+import logging
+
+# Logging----------------------------------------------------------------------
+
+FORMAT = '%(asctime)-15s %(levelname)s %(message)s'
+logging.basicConfig(level=logging.NOTSET, format=FORMAT)  # Log only errors
+LOG = logging.getLogger()
 
 # TCP related constants -------------------------------------------------------
 #
@@ -53,6 +60,15 @@ MSG_FIELD_SEP = ':'
 
 
 def tcp_send(sock, **data):
+    """
+
+    @param sock:
+    @type sock: socket.socket
+    @param data:
+    @type data: dict
+    @return:
+    @rtype: int
+    """
 
     #assert 'status' in data #TODO Client sends first request without status OR status should be always sent?
 
@@ -66,6 +82,13 @@ def tcp_send(sock, **data):
 
 
 def tcp_receive(sock):
+    """
+
+    @param sock:
+    @type sock: socket.socket
+    @return:
+    @rtype: dict[str, T]
+    """
 
     message_size = int(sock.recv(RSP_MESSAGE_SIZE))
 

@@ -52,7 +52,7 @@ def client_test():
     err = send_new_edit('test', 'testfile', 0, 'Hello!')
     print "Error: " + str(err)
 
-    err, file = open_file('test', own[0])
+    err, file, _ = open_file('test', own[0])
     print str(err) + " file content: " + str(file)
 
     #stop_listening()

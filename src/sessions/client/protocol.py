@@ -1,13 +1,7 @@
-#Imports----------------------------------------------------------------------
-import logging
-from os import path, makedirs
+# Imports----------------------------------------------------------------------
 from socket import error as soc_err
 from socket import socket, AF_INET, SOCK_STREAM, SHUT_RDWR
 from sessions.common import *
-
-FORMAT = '%(asctime)-15s %(levelname)s %(message)s'
-logging.basicConfig(level=logging.NOTSET, format=FORMAT)  # Log only errors
-LOG = logging.getLogger()
 
 
 def __connect(srv):
@@ -30,6 +24,7 @@ def __connect(srv):
     LOG.info('Client connected to %s:%d' % srv)
     LOG.debug('Local TCP socket is bound on %s:%d' % sock.getsockname())
     return sock
+
 
 def disconnect(sock):
     '''Disconnect from the server, close the TCP socket
@@ -207,31 +202,43 @@ def open_file_req(srv, user, fname):
     return err, file, sock
 
 
-def add_editor_req(srv, fname, edname):
-    '''
+def add_editor_req(srv, user, fname, edname):
+    """
     Requests adding new editor to file (new user who can edit file)
-    @param srv: tuple ( IP, port ), server socket address
-    @param edname: string, name of editor
-    @param fname: string, file name
-    @returns string:err_code
-    '''
+    @param srv: server socket address
+    @type srv: (str, int)
+    @param user: file owner
+    @type user: str
+    @param fname: file name
+    @type fname: str
+    @param edname: editors name
+    @type edname: str
+    @return: err_code
+    @rtype: str
+    """
 
-    args = {'user': edname, 'fname': fname}
+    args = {'user': user, 'fname': fname, 'editor': edname}
     err, _ = __handle_request(srv, args, REQ_ADD_EDITOR)
 
     return err
 
 
-def remove_editor_req(srv, edname, fname):
-    '''
+def remove_editor_req(srv, user, edname, fname):
+    """
     Requests removing editor from file (user who can edit file)
-    @param srv: tuple ( IP, port ), server socket address
-    @param edname: string, name of editor
-    @param fname: string, file name
-    @returns string:err_code
-    '''
+    @param srv: server socket address
+    @type srv: (str, int)
+    @param user: file owner
+    @type user: str
+    @param fname: file name
+    @type fname: str
+    @param edname: editors name
+    @type edname: str
+    @return: err_code
+    @rtype: str
+    """
 
-    args = {'user': edname, 'fname': fname}
+    args = {'user': user, 'fname': fname, 'editor': edname}
     err, _ = __handle_request(srv, args, REQ_REMOVE_EDITOR)
 
     return err
