@@ -47,7 +47,7 @@ def client_test():
     print("Error: " + str(err) + ", file content: " + str(file))
 
     # Add new editor
-   # err = add_editor('test', own[0], 'test2')
+    err = add_editor('test', own[0], 'test2')
     print("Error:" + str(err))
 
     err, file, queue = open_file('test2', own[0])

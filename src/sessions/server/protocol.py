@@ -1,10 +1,10 @@
 from __future__ import print_function
 
+import pickle
+import socket
 import os
-from socket import SHUT_RDWR
 from Queue import Queue, Empty
 from threading import Thread
-import pickle
 
 from sessions.common import *
 
@@ -144,7 +144,7 @@ def client_handler(client_socket):
             tcp_send(client_socket, status=RSP_BADFORMAT, error_message=e.message)
 
         if request['type'] != REQ_GET_FILE:
-            client_socket.shutdown(SHUT_RDWR)
+            client_socket.shutdown(socket.SHUT_RDWR)
             client_socket.close()
 
     return run
@@ -244,6 +244,10 @@ def acquire_lock(user, fname, line_no):
     @return: Was the lock successfully made?
     @rtype: bool
     """
+
+    if FILES[fname].owner != user and user not in FILES[fname].users:
+        LOG.warning('{0} was trying to access {1} without permissions'.format(user, fname))
+        raise ServerException('Don\'t have rights to access {0}'.format(fname))
 
     if FILES[fname].locks.get(line_no, user) != user:
         LOG.info('{0} failed to acquire a lock in {1} for line {2}'.format(user, fname, line_no))
@@ -353,15 +357,20 @@ class User(Thread):
             try:
                 line_no, line_content, is_new_line = self.notifications.get(timeout=1)
 
-                tcp_send(self.socket, status=RSP_OK, line_no=line_no, line_content=line_content, is_new_line=is_new_line)
+                try:
+                    tcp_send(self.socket, status=RSP_OK, line_no=line_no, line_content=line_content, is_new_line=is_new_line)
+                except socket.error:
+                    LOG.info('Connection ended with {0} from client side'.format(self.name))
+                    break
+
                 LOG.info('User {0} notified of the change at line {1}'.format(self.name, line_no))
 
             except Empty:
                 # LOG.debug('Empty queue at user {0}'.format(self.name))
                 pass
-
-        self.socket.shutdown(SHUT_RDWR)
-        self.socket.close()
+        else:
+            self.socket.shutdown(socket.SHUT_RDWR)
+            self.socket.close()
 
 
 class FileHandler(Thread):
@@ -385,7 +394,6 @@ class FileHandler(Thread):
         self.file_changes = Queue()
         self.locks = dict()
         """@type: dict[int, str]"""
-
 
         self._is_running = True
         # self.daemon = True

@@ -1,6 +1,5 @@
 from __future__ import print_function
 
-from socket import socket, AF_INET, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
 from sessions.server.protocol import *
 
 # Info-------------------------------------------------------------------------
@@ -39,8 +38,8 @@ def server_main(args):
         FILES[fname].start()
 
     LOG.info('Setting up the socket')
-    server_socket = socket(AF_INET, SOCK_STREAM)
-    server_socket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server_socket.bind(('', int(args.listenport)))  # Port from arguments (default 7777)
     server_socket.listen(5)  # Might change
     LOG.info('Ready for connections')
@@ -63,7 +62,7 @@ def server_main(args):
         raise e
     finally:
 
-        server_socket.shutdown(SHUT_RDWR)
+        server_socket.shutdown(socket.SHUT_RDWR)
         server_socket.close()
 
         LOG.info('Shuting down threads')
