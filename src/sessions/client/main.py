@@ -2,6 +2,7 @@
 
 # Import------------------------------------------------------------------------
 
+from __future__ import print_function
 from sessions.client.protocol import *
 from Queue import Queue
 from threading import Thread
@@ -17,8 +18,10 @@ ___VENDOR = 'Copyright (c) 2016 DSLab'
 # Variables
 
 server = '127.0.0.1', 7777
+"""@type: (str, int)"""
 listen_socket = None
 threadListen = None
+
 
 def __info():
     return '%s version %s (%s) %s' % (___NAME, ___VER, ___BUILT, ___VENDOR)
@@ -31,134 +34,159 @@ def initialize(args):
 
 # Temporary testing by client, later add to separate folder
 def client_test():
-
-    #Create file
+    # Create file
     err = create_file('test', 'testfile')
-    print "Error: " + str(err)
+    print("Error: " + str(err))
 
-    #Get file list
+    # Get file list
     err, own, avb = get_files('test')
-    print "Error: " + str(err) + ", owned files: " + str(own) + ", available files: " + str(avb)
+    print("Error: " + str(err) + ", owned files: " + str(own) + ", available files: " + str(avb))
 
-    #Get file content
+    # Get file content
     err, file, queue = open_file('test', own[0])
-    print "Error: " + str(err) + ", file content: " + str(file)
+    print("Error: " + str(err) + ", file content: " + str(file))
 
-    #Lock certain line for editing
+    # Lock certain line for editing
     err, lock = lock_line('test', 'testfile', 0)
-    print "Error: " + str(err) + ", lock: " + str(lock)
+    print("Error: " + str(err) + ", lock: " + str(lock))
 
-    #Edit line
+    # Edit line
     err = send_new_edit('test', 'testfile', 0, 'Hello!')
-    print "Error: " + str(err)
+    print("Error: " + str(err))
 
     err, file, _ = open_file('test', own[0])
-    print str(err) + " file content: " + str(file)
+    print(str(err) + " file content: " + str(file))
 
-    #stop_listening()
+    stop_listening()
 
 
 def get_files(user):
-    '''Get files owned by user and available for user.
-    @param user: string, username
-    @returns tuple ( string:err_description, list:owned_files, list:available_files )
-    '''
-    global server
+    """Get files owned by user and available for user.
+    @param user: username
+    @type user: str
+    @return:tuple ( string:err_description, list:owned_files, list:available_files )
+    @rtype: (str, list[str], list[str])
+    """
     return get_files_req(server, user)
 
 
 def get_editors(fname):
-    '''Get files owned by user and available for user.
-    @param user: string, username
-    @returns tuple ( string:err_description, list:users)
-    '''
-    global server
+    """Get files owned by user and available for user.
+    @param fname:
+    @type fname: str
+    @return: tuple ( string:err_description, list:users)
+    @rtype: (str, list[str])
+    """
     return get_editors_req(server, fname)
 
 
-def create_file(user,fname):
-    '''Create new file
-    @param user: string, username (owner)
-    @param fname: string, new filename
-    @returns string:err_description
-    '''
-    global server
+def create_file(user, fname):
+    """
+    Create new file
+    @param user:
+    @type user: str
+    @param fname:
+    @type fname: str
+    @return: err_description
+    @rtype: str
+    """
     return create_file_req(server, user, fname)
 
 
 def open_file(user, fname):
-    '''Open file by name
-    @param user: string, username (who wants to open given file)
-    @param fname: string, filename
-    @returns tuple ( string:err_description, string:file_content)
-    '''
-    global server, listen_socket, threadListen
+    """
+    Open file by name
+    @param user: username (who wants to open given file)
+    @type user: str
+    @param fname: filename
+    @type fname: str
+    @return: tuple ( string:err_description, string:file_content)
+    @rtype: (str, str, Queue.Queue)
+    """
+    global listen_socket, threadListen
 
-    #Closes previous listening session TODO is old thread closed?
-    if listen_socket != None:
+    # Closes previous listening session TODO is old thread closed?
+    if listen_socket is not None:
         stop_listening()
 
     err, file_cont, listen_socket = open_file_req(server, user, fname)
-    q = Queue();
+    q = Queue()
 
-    #threadListen = Thread(target=listen_for_edits(server, listen_socket, q))
-    #threadListen.start() #TODO problem with listening
+    threadListen = Thread(target=listen_for_edits(server, listen_socket, q))
+    threadListen.start()  # TODO problem with listening
 
     return err, file_cont, q
 
 
-#Not yet implemented by server side
-def add_editor(fname, edname):
-    '''Add editor (user) for the file
-    @param fname: string, filename
-    @param edname: string, editor name (who can edit file)
-    @returns string:err_description
-    '''
-    global server
-    return add_editor_req(server, fname, edname)
+def add_editor(user, fname, edname):
+    """
+    Add editor (user) for the file
+    @param user: username (who wants to open given file)
+    @type user: str
+    @param fname: filename
+    @type fname: str
+    @param edname: editor name (who can edit file)
+    @type edname: str
+    @return: err_description
+    @rtype: str
+    """
+    return add_editor_req(server, user, fname, edname)
 
 
-#Not yet implemented by server side
-def remove_editor(fname, edname):
-    '''Remove editor (user) for the file
-    @param fname: string, filename
-    @param edname: string, editor name (who can edit file)
-    @returns string:err_description
-    '''
-    global server
-    return add_editor_req(server, edname, fname)
+def remove_editor(user, fname, edname):
+    """
+    Remove editor (user) for the file
+    @param user: username (who wants to open given file)
+    @type user: str
+    @param fname: filename
+    @type fname: str
+    @param edname: editor name (who can edit file)
+    @type edname: str
+    @return: err_description
+    @rtype: str
+    """
+    return add_editor_req(server, user, edname, fname)
 
 
-#Not yet implemented by server side
 def send_new_edit(user, fname, line_no, line_content, is_new_line=False):
-    '''Send new edit to server (overwrites the line
-    @param user: string, username
-    @param fname: string, filename
-    @param line_no: int, line number
-    @param line_content: string, edited line
-    @param is_new_line: boolean, is creating new line requested
-    @returns string:err_description
-    '''
-    global server
+    """
+    Send new edit to server (overwrites the line
+    @param user: username
+    @type user: str
+    @param fname: filename
+    @type fname: str
+    @param line_no: line number
+    @type line_no: int
+    @param line_content: edited line
+    @type line_content: str
+    @param is_new_line: is creating new line requested
+    @type is_new_line: bool
+    @return: err_description
+    @rtype: str
+    """
     return send_new_edit_req(server, user, fname, line_no, line_content, is_new_line)
 
 
 def lock_line(user, fname, line_no):
-    '''
+    """
+
     @param user:
+    @type user: str
     @param fname:
+    @type fname: str
     @param line_no:
-    @returns tuple ( string:err_description, boolean: is line locked)
-    '''
-    global server
+    @type line_no: int
+    @return: tuple ( string:err_description, boolean: is line locked)
+    @rtype: (str, bool)
+    """
     return lock_line_req(server, user, fname, line_no)
 
 
 def stop_listening():
-    '''
+    """
     Disconnects from server (listening socket)
-    '''
+    """
     global listen_socket
     disconnect(listen_socket)
     listen_socket = None
-    #TODO clear queue?
+    # TODO clear queue?

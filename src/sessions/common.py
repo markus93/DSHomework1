@@ -1,7 +1,7 @@
-'''
+"""
 Common variables, methods and structures of the Text Editor modules
 
-'''
+"""
 # Imports----------------------------------------------------------------------
 
 import json
@@ -18,7 +18,6 @@ LOG = logging.getLogger()
 DEFAULT_SERVER_PORT = 7777
 DEFAULT_SERVER_INET_ADDR = '127.0.0.1'
 RSP_MESSAGE_SIZE = 8
-
 
 # Requests --------------------------------------------------------------------
 REQ_LIST_FILES = '1'
@@ -38,7 +37,7 @@ CTR_MSGS = {REQ_LIST_FILES: 'List currently uploaded files',
             REQ_EDIT_FILE: 'Edit a line inside a file',
             REQ_ADD_EDITOR: 'Add an editor to a file owned by you',
             REQ_REMOVE_EDITOR: 'Remove an editor from a file owned by you'
-}
+            }
 # Responses--------------------------------------------------------------------
 RSP_OK = '0'
 RSP_BADFORMAT = '1'
@@ -46,15 +45,16 @@ RSP_MSGNOTFOUND = '2'
 RSP_UNKNCONTROL = '3'
 RSP_ERRTRANSM = '4'
 RSP_CANT_CONNECT = '5'
-ERR_MSGS = { RSP_OK:'No Error',
-               RSP_BADFORMAT:'Malformed message',
-               RSP_MSGNOTFOUND:'Message not found by iD',
-               RSP_UNKNCONTROL:'Unknown control code',
-               RSP_ERRTRANSM:'Transmission Error',
-               RSP_CANT_CONNECT:'Can\'t connect to server'
-               }
+ERR_MSGS = {RSP_OK: 'No Error',
+            RSP_BADFORMAT: 'Malformed message',
+            RSP_MSGNOTFOUND: 'Message not found by iD',
+            RSP_UNKNCONTROL: 'Unknown control code',
+            RSP_ERRTRANSM: 'Transmission Error',
+            RSP_CANT_CONNECT: 'Can\'t connect to server'
+            }
 # Field separator for sending multiple values ---------------------------------
 MSG_FIELD_SEP = ':'
+
 
 # Common methods --------------------------------------------------------------
 
@@ -63,18 +63,16 @@ def tcp_send(sock, **data):
     """
 
     @param sock:
-    @type sock: socket.socket
+    @type sock: socket._socketobject
     @param data:
-    @type data: dict
+    @type data: dict[str, str|int|bool|list[str]]
     @return:
     @rtype: int
     """
 
-    #assert 'status' in data #TODO Client sends first request without status OR status should be always sent?
-
     message = json.dumps(data)
     length_str = str(len(message))
-    length_str = '0'*(RSP_MESSAGE_SIZE - len(length_str)) + length_str
+    length_str = '0' * (RSP_MESSAGE_SIZE - len(length_str)) + length_str
 
     sock.sendall(length_str + message)
 
@@ -85,9 +83,9 @@ def tcp_receive(sock):
     """
 
     @param sock:
-    @type sock: socket.socket
+    @type sock: socket._socketobject
     @return:
-    @rtype: dict[str, T]
+    @rtype: dict[str, str|int|bool|list[str]]
     """
 
     message_size = int(sock.recv(RSP_MESSAGE_SIZE))

@@ -5,10 +5,13 @@ from sessions.common import *
 
 
 def __connect(srv):
-    '''Create socket, connect to server
-    @param srv: tuple ( string:IP, int:port ), server's address
-    @returns sock: Socket
-    '''
+    """
+    Create socket, connect to server
+    @param srv: server's address
+    @type srv: (str, int)
+    @return:
+    @rtype: socket._socketobject
+    """
 
     # Declaring TCP socket
     sock = socket(AF_INET, SOCK_STREAM)
@@ -27,10 +30,13 @@ def __connect(srv):
 
 
 def disconnect(sock):
-    '''Disconnect from the server, close the TCP socket
+    """
+    Disconnect from the server, close the TCP socket
     @param sock: TCP socket to close
-    @param srv: tuple ( string:IP, int:port ), server's address
-    '''
+    @type sock: socket._socketobject
+    @return:
+    @rtype:
+    """
 
     # Check if the socket is closed disconnected already ( in case there can
     # be no I/O descriptor
@@ -49,35 +55,40 @@ def disconnect(sock):
 
 
 def __request(srv, r_type, args, sock):
-    '''Send request to server, receive response
-    @param srv: tuple ( IP, port ), server socket address
-    @param r_type: string, request type
-    @param args: dictionary, request parameters/data
-    @returns dictionary: response
-    '''
+    """
+    Send request to server, receive response
+    @param srv: server socket address
+    @type srv: (str, int)
+    @param r_type: request type
+    @type r_type: str
+    @param args: request parameters/data
+    @type args: dict[str, str|int|bool|list[str]]
+    @param sock:
+    @type sock: socket._socketobject
+    @return:
+    @rtype: dict[str, str|int|bool|list[str]]
+    """
 
-    n = 0   # Number of bytes sent
     try:
         n = tcp_send(sock, type=r_type, **args)
     except soc_err as e:
         # In case we failed in the middle of transfer we should report error
-        LOG.error('Interrupted sending the data to %s:%d, '\
-                    'error: %s' % (sock+(e,)))
+        LOG.error('Interrupted sending the data to %s:%d, ' \
+                  'error: %s' % (sock + (e,)))
         # ... and close socket
         disconnect(sock)
-        return RSP_ERRTRANSM,[str(e)]
+        return RSP_ERRTRANSM, [str(e)]
 
-    LOG.info('Sent [%s] request, total bytes sent [%d]'\
+    LOG.info('Sent [%s] request, total bytes sent [%d]' \
              '' % (CTR_MSGS[r_type], n))
 
     # Request sent, start receiving response
-    rsp = None
     try:
         rsp = tcp_receive(sock)
-    except (soc_err) as e:
+    except soc_err as e:
         # In case we failed in the middle of transfer we should report error
-        LOG.error('Interrupted receiving the data from %s:%d, '\
-                  'error: %s' % (srv+(e,)))
+        LOG.error('Interrupted receiving the data from %s:%d, ' \
+                  'error: %s' % (srv + (e,)))
         # ... and close socket
         disconnect(sock)
         return RSP_ERRTRANSM, [str(e)]
@@ -96,14 +107,19 @@ def __request(srv, r_type, args, sock):
 
 
 def __handle_request(srv, args, r_type, end_connection=True):
-    '''
+    """
     Handles Server connection, calls method request and  handles error messages
-    @param srv: tuple ( IP, port ), server socket address
+    @param srv: server socket address
+    @type srv: (str, int)
     @param args: dictionary, request parameters/data
-    @param r_type: string, request type
+    @type args: dict[str, str|int|bool|list[str]]
+    @param r_type: request type
+    @type r_type: str
     @param end_connection: boolean, whether connection left open or not
-    @returns tuple ( string:err_code, dictionary:response arguments )
-    '''
+    @type end_connection: bool
+    @return: tuple ( string:err_code, dictionary:response arguments )
+    @rtype: (str, dict[str, str|int|bool|list[str]])
+    """
 
     # Connecting to server
     sock = __connect(srv)
@@ -116,7 +132,7 @@ def __handle_request(srv, args, r_type, end_connection=True):
 
         err = response['status']
 
-        if (err != RSP_OK):
+        if err != RSP_OK:
             err = ERR_MSGS[err]
         else:
             err = ""
@@ -134,17 +150,20 @@ def __handle_request(srv, args, r_type, end_connection=True):
 
         return err, response
     else:
-        #If not disconnected return sock also
+        # If not disconnected return sock also
         return err, response, sock
 
 
 def get_files_req(srv, user):
-    '''
+    """
     Requests files list from server, divided into owned and available files
-    @param srv: tuple ( IP, port ), server socket address
-    @param user: string, username
-    @returns tuple ( string:err_code, list:owned files, list: available files)
-    '''
+    @param srv: server socket address
+    @type srv: (str, int)
+    @param user: username
+    @type user: str
+    @return: tuple ( string:err_code, list:owned files, list: available files)
+    @rtype: (str, list[str], list[str])
+    """
 
     args = {'user': user}
     err, response = __handle_request(srv, args, REQ_LIST_FILES)
@@ -156,12 +175,15 @@ def get_files_req(srv, user):
 
 
 def get_editors_req(srv, fname):
-    '''
+    """
     Requests editors (users who have access to file)
-    @param srv: tuple ( IP, port ), server socket address
-    @param fname: string, file name
-    @returns tuple ( string:err_code, list:editors)
-    '''
+    @param srv: server socket address
+    @type srv: (str, int)
+    @param fname: file name
+    @type fname: str
+    @return: tuple ( string:err_code, list:editors)
+    @rtype: (str, list[str])
+    """
 
     args = {'fname': fname}
     err, response = __handle_request(srv, args, REQ_GET_USERS)
@@ -172,13 +194,17 @@ def get_editors_req(srv, fname):
 
 
 def create_file_req(srv, user, fname):
-    '''
+    """
     Requests creating new file
-    @param srv: tuple ( IP, port ), server socket address
-    @param user: string, username
-    @param fname: string, file name
-    @returns string:err_code
-    '''
+    @param srv: server socket address
+    @type srv: (str, int)
+    @param user: username
+    @type user: str
+    @param fname: file name
+    @type fname: str
+    @return: err_code
+    @rtype: str
+    """
 
     args = {'user': user, 'fname': fname}
     err, _ = __handle_request(srv, args, REQ_MAKE_FILE)
@@ -187,13 +213,24 @@ def create_file_req(srv, user, fname):
 
 
 def open_file_req(srv, user, fname):
-    '''
+    """
+    Requests opening given file (user must have access to file)
+    @param srv: server socket address
+    @type srv: (str, int)
+    @param user: username
+    @type user: str
+    @param fname: file name
+    @type fname: str
+    @return: tuple (string:err_code, string: file content, socket: sock)
+    @rtype: (str, str, socket._socketobject)
+    """
+    """
     Requests opening given file (user must have access to file)
     @param srv: tuple ( IP, port ), server socket address
     @param user: string, username
     @param fname: string, file name
     @returns tuple (string:err_code, string: file content, socket: sock)
-    '''
+    """
 
     args = {'user': user, 'fname': fname}
     err, response, sock = __handle_request(srv, args, REQ_GET_FILE, end_connection=False)
@@ -245,16 +282,23 @@ def remove_editor_req(srv, user, edname, fname):
 
 
 def send_new_edit_req(srv, user, fname, line_no, line_content, is_new_line):
-    '''
+    """
     Requests writing edited line to file
-    @param srv: tuple ( IP, port ), server socket address
-    @param user: string, username
-    @param fname: string, file name
-    @param line_no: int, line number
-    @param line_content: string, edited line
-    @param is_new_line: string, file name
-    @returns string:err_code
-    '''
+    @param srv: server socket address
+    @type srv: (str, int)
+    @param user: username
+    @type user: str
+    @param fname: file name
+    @type fname: str
+    @param line_no: line number
+    @type line_no: int
+    @param line_content: edited line
+    @type line_content: str
+    @param is_new_line: Is the line added?
+    @type is_new_line: bool
+    @return: err_code
+    @rtype: str
+    """
 
     args = {'user': user, 'fname': fname, 'line_no': line_no, 'line_content': line_content, 'is_new_line': is_new_line}
 
@@ -264,14 +308,19 @@ def send_new_edit_req(srv, user, fname, line_no, line_content, is_new_line):
 
 
 def lock_line_req(srv, user, fname, line_no):
-    '''
+    """
     Requests locking a line to given user
-    @param srv: tuple ( IP, port ), server socket address
-    @param user: string, username
-    @param fname: string, file name
-    @param line_no: int, line number
-    @returns tuple (string:err_code, boolean:lock)
-    '''
+    @param srv: server socket address
+    @type srv: (str, int)
+    @param user: username
+    @type user: str
+    @param fname: filename
+    @type fname: str
+    @param line_no: line number
+    @type line_no: int
+    @return: tuple (string:err_code, boolean:lock)
+    @rtype: (str, bool)
+    """
 
     args = {'user': user, 'fname': fname, 'line_no': line_no}
     err, response = __handle_request(srv, args, REQ_GET_LOCK)
@@ -282,25 +331,28 @@ def lock_line_req(srv, user, fname, line_no):
 
 
 def listen_for_edits(srv, sock, q):
-    '''
+    """
     Listens for new edits to file and puts them to Queue (for GUI to receive)
-    @param srv: tuple ( IP, port ), server socket address
-    @param sock: string, username
-    @param q: string, file name
-    '''
+    @param srv: server socket address
+    @type srv: (str, int)
+    @param sock: server socket
+    @type sock: socket._socketobject
+    @param q: queue
+    @type q: Queue.Queue
+    @return:
+    @rtype:
+    """
 
-    #Loop until disconnected from server
+    # Loop until disconnected from server
     while True:
 
-        rsp = None
-
         try:
-            #Waiting for response from server (line number and line content)
+            # Waiting for response from server (line number and line content)
             rsp = tcp_receive(sock)
 
         except soc_err as e:
             # In case we failed in the middle of transfer we should report error
-            LOG.error('Interrupted receiving the data from %s:%d, ' \
+            LOG.error('Interrupted receiving the data from %s:%d, '
                       'error: %s' % (srv + (e,)))
             # ... and close socket
             disconnect(sock)

@@ -4,7 +4,7 @@ import os
 from socket import SHUT_RDWR
 from Queue import Queue, Empty
 from threading import Thread
-import cPickle as pickle
+import pickle
 
 from ..common import *
 
@@ -24,7 +24,7 @@ class ServerException(Exception):
 def client_handler(client_socket):
     """Handle any request made by the client
     @param client_socket:
-    @type client_socket: socket.socket
+    @type client_socket: socket._socketobject
     @return:
     @rtype:
     """
@@ -97,7 +97,8 @@ def client_handler(client_socket):
 
             elif request['type'] == REQ_EDIT_FILE:
 
-                if 'user' not in request or 'fname' not in request or 'line_no' not in request or 'line_content' not in request:
+                if 'user' not in request or 'fname' not in request or 'line_no' not in request \
+                        or 'line_content' not in request:
                     tcp_send(client_socket,
                              status=RSP_BADFORMAT)
 
@@ -324,9 +325,9 @@ def remove_editor(user, fname, editor):
 class User(Thread):
     def __init__(self, user_socket, name):
         """
-        @param user_socket:
-        @type user_socket: socket.socket
-        @param name:
+        @param user_socket: Socket, where to send updates about the file
+        @type user_socket: socket._socketobject
+        @param name: name of the user
         @type name: str
         """
         super(User, self).__init__()
