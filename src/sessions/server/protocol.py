@@ -6,7 +6,7 @@ from Queue import Queue, Empty
 from threading import Thread
 import pickle
 
-from ..common import *
+from sessions.common import *
 
 DIRECTORY_FILES = '_files'
 DIRECTORY_OBJECTS = '_objects'
@@ -274,6 +274,13 @@ def edit_line(user, fname, line_no, line_content, is_new_line=False):
         LOG.warning('{0} was trying to access {1} without permissions'.format(user, fname))
         raise ServerException('Don\'t have rights to access {0}'.format(fname))
 
+    if FILES[fname].locks.get(line_no, None) != user:
+        LOG.warning('{0} was trying to edit {1} without locking a line'.format(user, fname))
+        raise ServerException('Don\'t have lock on line {0}'.format(line_no))
+
+    if not line_content.endswith('\n'):
+        line_content += '\n'
+
     FILES[fname].file_changes.put((line_no, line_content, is_new_line, user))
     LOG.info('File change request was made by {0} for {1}'.format(user, fname))
 
@@ -377,6 +384,8 @@ class FileHandler(Thread):
         self.users = users
         self.file_changes = Queue()
         self.locks = dict()
+        """@type: dict[int, str]"""
+
 
         self._is_running = True
         # self.daemon = True
@@ -398,7 +407,7 @@ class FileHandler(Thread):
 
                         # Update locks
                         for key in sorted(self.locks.keys(), reverse=True):
-                            if key <= line_content:
+                            if key <= line_no:
                                 self.locks[key + 1] = self.locks.pop(key)
 
                     else:

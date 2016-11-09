@@ -1,8 +1,7 @@
 from __future__ import print_function
 
 from socket import socket, AF_INET, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
-
-from .protocol import *
+from sessions.server.protocol import *
 
 # Info-------------------------------------------------------------------------
 

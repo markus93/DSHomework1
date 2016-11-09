@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>sessions.server.main</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="sessions-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            >Colted</th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="sessions-module.html">Package&nbsp;sessions</a> ::
+        <a href="sessions.server-module.html">Package&nbsp;server</a> ::
+        Module&nbsp;main
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="sessions.server.main-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="sessions.server.main-module.html">Module sessions.server.main</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno"> 1</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">__future__</tt> <tt class="py-keyword">import</tt> <tt class="py-name">print_function</tt> </tt>
+<a name="L2"></a><tt class="py-lineno"> 2</tt>  <tt class="py-line"> </tt>
+<a name="L3"></a><tt class="py-lineno"> 3</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">socket</tt> <tt class="py-keyword">import</tt> <tt class="py-name">socket</tt><tt class="py-op">,</tt> <tt id="link-0" class="py-name" targets="Variable sessions.client.main.AF_INET=sessions.client.main-module.html#AF_INET"><a title="sessions.client.main.AF_INET" class="py-name" href="#" onclick="return doclink('link-0', 'AF_INET', 'link-0');">AF_INET</a></tt><tt class="py-op">,</tt> <tt id="link-1" class="py-name" targets="Variable sessions.client.main.SOCK_STREAM=sessions.client.main-module.html#SOCK_STREAM"><a title="sessions.client.main.SOCK_STREAM" class="py-name" href="#" onclick="return doclink('link-1', 'SOCK_STREAM', 'link-1');">SOCK_STREAM</a></tt><tt class="py-op">,</tt> <tt class="py-name">SOL_SOCKET</tt><tt class="py-op">,</tt> <tt class="py-name">SO_REUSEADDR</tt> </tt>
+<a name="L4"></a><tt class="py-lineno"> 4</tt>  <tt class="py-line"> </tt>
+<a name="L5"></a><tt class="py-lineno"> 5</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-2" class="py-name" targets="Package sessions=sessions-module.html"><a title="sessions" class="py-name" href="#" onclick="return doclink('link-2', 'sessions', 'link-2');">sessions</a></tt><tt class="py-op">.</tt><tt id="link-3" class="py-name" targets="Variable sessions.client.main.server=sessions.client.main-module.html#server,Package sessions.server=sessions.server-module.html"><a title="sessions.client.main.server
+sessions.server" class="py-name" href="#" onclick="return doclink('link-3', 'server', 'link-3');">server</a></tt><tt class="py-op">.</tt><tt id="link-4" class="py-name" targets="Module sessions.client.protocol=sessions.client.protocol-module.html,Module sessions.server.protocol=sessions.server.protocol-module.html"><a title="sessions.client.protocol
+sessions.server.protocol" class="py-name" href="#" onclick="return doclink('link-4', 'protocol', 'link-4');">protocol</a></tt> <tt class="py-keyword">import</tt> <tt class="py-op">*</tt> </tt>
+<a name="L6"></a><tt class="py-lineno"> 6</tt>  <tt class="py-line"> </tt>
+<a name="L7"></a><tt class="py-lineno"> 7</tt>  <tt class="py-line"><tt class="py-comment"># Info-------------------------------------------------------------------------</tt> </tt>
+<a name="L8"></a><tt class="py-lineno"> 8</tt>  <tt class="py-line"> </tt>
+<a name="L9"></a><tt class="py-lineno"> 9</tt>  <tt class="py-line"><tt id="link-5" class="py-name" targets="Variable sessions.client.main.___NAME=sessions.client.main-module.html#___NAME,Variable sessions.server.main.___NAME=sessions.server.main-module.html#___NAME"><a title="sessions.client.main.___NAME
+sessions.server.main.___NAME" class="py-name" href="#" onclick="return doclink('link-5', '___NAME', 'link-5');">___NAME</a></tt> <tt class="py-op">=</tt> <tt class="py-string">'Colted'</tt> </tt>
+<a name="L10"></a><tt class="py-lineno">10</tt>  <tt class="py-line"><tt id="link-6" class="py-name" targets="Variable sessions.client.main.___VER=sessions.client.main-module.html#___VER,Variable sessions.server.main.___VER=sessions.server.main-module.html#___VER"><a title="sessions.client.main.___VER
+sessions.server.main.___VER" class="py-name" href="#" onclick="return doclink('link-6', '___VER', 'link-6');">___VER</a></tt> <tt class="py-op">=</tt> <tt class="py-string">'0.0.0.1'</tt> </tt>
+<a name="L11"></a><tt class="py-lineno">11</tt>  <tt class="py-line"><tt id="link-7" class="py-name" targets="Variable sessions.client.main.___DESC=sessions.client.main-module.html#___DESC,Variable sessions.server.main.___DESC=sessions.server.main-module.html#___DESC"><a title="sessions.client.main.___DESC
+sessions.server.main.___DESC" class="py-name" href="#" onclick="return doclink('link-7', '___DESC', 'link-7');">___DESC</a></tt> <tt class="py-op">=</tt> <tt class="py-string">'Collaborative Text Editor'</tt> </tt>
+<a name="L12"></a><tt class="py-lineno">12</tt>  <tt class="py-line"><tt id="link-8" class="py-name" targets="Variable sessions.client.main.___BUILT=sessions.client.main-module.html#___BUILT,Variable sessions.server.main.___BUILT=sessions.server.main-module.html#___BUILT"><a title="sessions.client.main.___BUILT
+sessions.server.main.___BUILT" class="py-name" href="#" onclick="return doclink('link-8', '___BUILT', 'link-8');">___BUILT</a></tt> <tt class="py-op">=</tt> <tt class="py-string">'2016-11-23'</tt> </tt>
+<a name="L13"></a><tt class="py-lineno">13</tt>  <tt class="py-line"><tt id="link-9" class="py-name" targets="Variable sessions.client.main.___VENDOR=sessions.client.main-module.html#___VENDOR,Variable sessions.server.main.___VENDOR=sessions.server.main-module.html#___VENDOR"><a title="sessions.client.main.___VENDOR
+sessions.server.main.___VENDOR" class="py-name" href="#" onclick="return doclink('link-9', '___VENDOR', 'link-9');">___VENDOR</a></tt> <tt class="py-op">=</tt> <tt class="py-string">'Copyright (c) 2016 DSLab'</tt> </tt>
+<a name="L14"></a><tt class="py-lineno">14</tt>  <tt class="py-line"> </tt>
+<a name="L15"></a><tt class="py-lineno">15</tt>  <tt class="py-line"> </tt>
+<a name="__info"></a><div id="__info-def"><a name="L16"></a><tt class="py-lineno">16</tt> <a class="py-toggle" href="#" id="__info-toggle" onclick="return toggle('__info');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="sessions.server.main-module.html#__info">__info</a><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="__info-collapsed" style="display:none;" pad="++" indent="++++"></div><div id="__info-expanded"><a name="L17"></a><tt class="py-lineno">17</tt>  <tt class="py-line">    <tt class="py-keyword">return</tt> <tt class="py-string">'%s version %s (%s) %s'</tt> <tt class="py-op">%</tt> <tt class="py-op">(</tt><tt id="link-10" class="py-name"><a title="sessions.client.main.___NAME
+sessions.server.main.___NAME" class="py-name" href="#" onclick="return doclink('link-10', '___NAME', 'link-5');">___NAME</a></tt><tt class="py-op">,</tt> <tt id="link-11" class="py-name"><a title="sessions.client.main.___VER
+sessions.server.main.___VER" class="py-name" href="#" onclick="return doclink('link-11', '___VER', 'link-6');">___VER</a></tt><tt class="py-op">,</tt> <tt id="link-12" class="py-name"><a title="sessions.client.main.___BUILT
+sessions.server.main.___BUILT" class="py-name" href="#" onclick="return doclink('link-12', '___BUILT', 'link-8');">___BUILT</a></tt><tt class="py-op">,</tt> <tt id="link-13" class="py-name"><a title="sessions.client.main.___VENDOR
+sessions.server.main.___VENDOR" class="py-name" href="#" onclick="return doclink('link-13', '___VENDOR', 'link-9');">___VENDOR</a></tt><tt class="py-op">)</tt> </tt>
+</div><a name="L18"></a><tt class="py-lineno">18</tt>  <tt class="py-line"> </tt>
+<a name="L19"></a><tt class="py-lineno">19</tt>  <tt class="py-line"><tt class="py-comment"># Main-------------------------------------------------------------------------</tt> </tt>
+<a name="L20"></a><tt class="py-lineno">20</tt>  <tt class="py-line"> </tt>
+<a name="L21"></a><tt class="py-lineno">21</tt>  <tt class="py-line"> </tt>
+<a name="server_main"></a><div id="server_main-def"><a name="L22"></a><tt class="py-lineno">22</tt> <a class="py-toggle" href="#" id="server_main-toggle" onclick="return toggle('server_main');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="sessions.server.main-module.html#server_main">server_main</a><tt class="py-op">(</tt><tt class="py-param">args</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="server_main-collapsed" style="display:none;" pad="++" indent="++++"></div><div id="server_main-expanded"><a name="L23"></a><tt class="py-lineno">23</tt>  <tt class="py-line">    <tt class="py-docstring">"""</tt> </tt>
+<a name="L24"></a><tt class="py-lineno">24</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L25"></a><tt class="py-lineno">25</tt>  <tt class="py-line"><tt class="py-docstring">    @param args:</tt> </tt>
+<a name="L26"></a><tt class="py-lineno">26</tt>  <tt class="py-line"><tt class="py-docstring">    @type args:</tt> </tt>
+<a name="L27"></a><tt class="py-lineno">27</tt>  <tt class="py-line"><tt class="py-docstring">    @return:</tt> </tt>
+<a name="L28"></a><tt class="py-lineno">28</tt>  <tt class="py-line"><tt class="py-docstring">    @rtype:</tt> </tt>
+<a name="L29"></a><tt class="py-lineno">29</tt>  <tt class="py-line"><tt class="py-docstring">    """</tt> </tt>
+<a name="L30"></a><tt class="py-lineno">30</tt>  <tt class="py-line"> </tt>
+<a name="L31"></a><tt class="py-lineno">31</tt>  <tt class="py-line">    <tt id="link-14" class="py-name" targets="Variable sessions.client.main.LOG=sessions.client.main-module.html#LOG,Variable sessions.client.protocol.LOG=sessions.client.protocol-module.html#LOG,Variable sessions.common.LOG=sessions.common-module.html#LOG,Variable sessions.server.main.LOG=sessions.server.main-module.html#LOG,Variable sessions.server.protocol.LOG=sessions.server.protocol-module.html#LOG"><a title="sessions.client.main.LOG
+sessions.client.protocol.LOG
+sessions.common.LOG
+sessions.server.main.LOG
+sessions.server.protocol.LOG" class="py-name" href="#" onclick="return doclink('link-14', 'LOG', 'link-14');">LOG</a></tt><tt class="py-op">.</tt><tt class="py-name">info</tt><tt class="py-op">(</tt><tt class="py-string">'Starting up the server'</tt><tt class="py-op">)</tt> </tt>
+<a name="L32"></a><tt class="py-lineno">32</tt>  <tt class="py-line">    <tt id="link-15" class="py-name"><a title="sessions.client.main.LOG
+sessions.client.protocol.LOG
+sessions.common.LOG
+sessions.server.main.LOG
+sessions.server.protocol.LOG" class="py-name" href="#" onclick="return doclink('link-15', 'LOG', 'link-14');">LOG</a></tt><tt class="py-op">.</tt><tt class="py-name">info</tt><tt class="py-op">(</tt><tt class="py-string">'Creating directories'</tt><tt class="py-op">)</tt> </tt>
+<a name="L33"></a><tt class="py-lineno">33</tt>  <tt class="py-line">    <tt class="py-keyword">for</tt> <tt class="py-name">directory</tt> <tt class="py-keyword">in</tt> <tt class="py-op">(</tt><tt id="link-16" class="py-name" targets="Variable sessions.server.main.DIRECTORY_FILES=sessions.server.main-module.html#DIRECTORY_FILES,Variable sessions.server.protocol.DIRECTORY_FILES=sessions.server.protocol-module.html#DIRECTORY_FILES"><a title="sessions.server.main.DIRECTORY_FILES
+sessions.server.protocol.DIRECTORY_FILES" class="py-name" href="#" onclick="return doclink('link-16', 'DIRECTORY_FILES', 'link-16');">DIRECTORY_FILES</a></tt><tt class="py-op">,</tt> <tt id="link-17" class="py-name" targets="Variable sessions.server.main.DIRECTORY_OBJECTS=sessions.server.main-module.html#DIRECTORY_OBJECTS,Variable sessions.server.protocol.DIRECTORY_OBJECTS=sessions.server.protocol-module.html#DIRECTORY_OBJECTS"><a title="sessions.server.main.DIRECTORY_OBJECTS
+sessions.server.protocol.DIRECTORY_OBJECTS" class="py-name" href="#" onclick="return doclink('link-17', 'DIRECTORY_OBJECTS', 'link-17');">DIRECTORY_OBJECTS</a></tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L34"></a><tt class="py-lineno">34</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">exists</tt><tt class="py-op">(</tt><tt class="py-name">directory</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L35"></a><tt class="py-lineno">35</tt>  <tt class="py-line">            <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">makedirs</tt><tt class="py-op">(</tt><tt class="py-name">directory</tt><tt class="py-op">)</tt> </tt>
+<a name="L36"></a><tt class="py-lineno">36</tt>  <tt class="py-line"> </tt>
+<a name="L37"></a><tt class="py-lineno">37</tt>  <tt class="py-line">    <tt id="link-18" class="py-name"><a title="sessions.client.main.LOG
+sessions.client.protocol.LOG
+sessions.common.LOG
+sessions.server.main.LOG
+sessions.server.protocol.LOG" class="py-name" href="#" onclick="return doclink('link-18', 'LOG', 'link-14');">LOG</a></tt><tt class="py-op">.</tt><tt class="py-name">info</tt><tt class="py-op">(</tt><tt class="py-string">'Initializing file handlers'</tt><tt class="py-op">)</tt> </tt>
+<a name="L38"></a><tt class="py-lineno">38</tt>  <tt class="py-line">    <tt class="py-keyword">for</tt> <tt class="py-name">fname</tt> <tt class="py-keyword">in</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">listdir</tt><tt class="py-op">(</tt><tt id="link-19" class="py-name"><a title="sessions.server.main.DIRECTORY_OBJECTS
+sessions.server.protocol.DIRECTORY_OBJECTS" class="py-name" href="#" onclick="return doclink('link-19', 'DIRECTORY_OBJECTS', 'link-17');">DIRECTORY_OBJECTS</a></tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L39"></a><tt class="py-lineno">39</tt>  <tt class="py-line">        <tt id="link-20" class="py-name" targets="Variable sessions.server.main.FILES=sessions.server.main-module.html#FILES,Variable sessions.server.protocol.FILES=sessions.server.protocol-module.html#FILES"><a title="sessions.server.main.FILES
+sessions.server.protocol.FILES" class="py-name" href="#" onclick="return doclink('link-20', 'FILES', 'link-20');">FILES</a></tt><tt class="py-op">[</tt><tt class="py-name">fname</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">pickle</tt><tt class="py-op">.</tt><tt class="py-name">load</tt><tt class="py-op">(</tt><tt class="py-name">open</tt><tt class="py-op">(</tt><tt id="link-21" class="py-name"><a title="sessions.server.main.DIRECTORY_OBJECTS
+sessions.server.protocol.DIRECTORY_OBJECTS" class="py-name" href="#" onclick="return doclink('link-21', 'DIRECTORY_OBJECTS', 'link-17');">DIRECTORY_OBJECTS</a></tt> <tt class="py-op">+</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">sep</tt> <tt class="py-op">+</tt> <tt class="py-name">fname</tt><tt class="py-op">,</tt> <tt class="py-string">'rb'</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L40"></a><tt class="py-lineno">40</tt>  <tt class="py-line">        <tt id="link-22" class="py-name"><a title="sessions.server.main.FILES
+sessions.server.protocol.FILES" class="py-name" href="#" onclick="return doclink('link-22', 'FILES', 'link-20');">FILES</a></tt><tt class="py-op">[</tt><tt class="py-name">fname</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">start</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L41"></a><tt class="py-lineno">41</tt>  <tt class="py-line"> </tt>
+<a name="L42"></a><tt class="py-lineno">42</tt>  <tt class="py-line">    <tt id="link-23" class="py-name"><a title="sessions.client.main.LOG
+sessions.client.protocol.LOG
+sessions.common.LOG
+sessions.server.main.LOG
+sessions.server.protocol.LOG" class="py-name" href="#" onclick="return doclink('link-23', 'LOG', 'link-14');">LOG</a></tt><tt class="py-op">.</tt><tt class="py-name">info</tt><tt class="py-op">(</tt><tt class="py-string">'Setting up the socket'</tt><tt class="py-op">)</tt> </tt>
+<a name="L43"></a><tt class="py-lineno">43</tt>  <tt class="py-line">    <tt class="py-name">server_socket</tt> <tt class="py-op">=</tt> <tt class="py-name">socket</tt><tt class="py-op">(</tt><tt id="link-24" class="py-name"><a title="sessions.client.main.AF_INET" class="py-name" href="#" onclick="return doclink('link-24', 'AF_INET', 'link-0');">AF_INET</a></tt><tt class="py-op">,</tt> <tt id="link-25" class="py-name"><a title="sessions.client.main.SOCK_STREAM" class="py-name" href="#" onclick="return doclink('link-25', 'SOCK_STREAM', 'link-1');">SOCK_STREAM</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L44"></a><tt class="py-lineno">44</tt>  <tt class="py-line">    <tt class="py-name">server_socket</tt><tt class="py-op">.</tt><tt class="py-name">setsockopt</tt><tt class="py-op">(</tt><tt class="py-name">SOL_SOCKET</tt><tt class="py-op">,</tt> <tt class="py-name">SO_REUSEADDR</tt><tt class="py-op">,</tt> <tt class="py-number">1</tt><tt class="py-op">)</tt> </tt>
+<a name="L45"></a><tt class="py-lineno">45</tt>  <tt class="py-line">    <tt class="py-name">server_socket</tt><tt class="py-op">.</tt><tt class="py-name">bind</tt><tt class="py-op">(</tt><tt class="py-op">(</tt><tt class="py-string">''</tt><tt class="py-op">,</tt> <tt class="py-name">int</tt><tt class="py-op">(</tt><tt class="py-name">args</tt><tt class="py-op">.</tt><tt class="py-name">listenport</tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">)</tt>  <tt class="py-comment"># Port from arguments (default 7777)</tt> </tt>
+<a name="L46"></a><tt class="py-lineno">46</tt>  <tt class="py-line">    <tt class="py-name">server_socket</tt><tt class="py-op">.</tt><tt class="py-name">listen</tt><tt class="py-op">(</tt><tt class="py-number">5</tt><tt class="py-op">)</tt>  <tt class="py-comment"># Might change</tt> </tt>
+<a name="L47"></a><tt class="py-lineno">47</tt>  <tt class="py-line">    <tt id="link-26" class="py-name"><a title="sessions.client.main.LOG
+sessions.client.protocol.LOG
+sessions.common.LOG
+sessions.server.main.LOG
+sessions.server.protocol.LOG" class="py-name" href="#" onclick="return doclink('link-26', 'LOG', 'link-14');">LOG</a></tt><tt class="py-op">.</tt><tt class="py-name">info</tt><tt class="py-op">(</tt><tt class="py-string">'Ready for connections'</tt><tt class="py-op">)</tt> </tt>
+<a name="L48"></a><tt class="py-lineno">48</tt>  <tt class="py-line"> </tt>
+<a name="L49"></a><tt class="py-lineno">49</tt>  <tt class="py-line">    <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L50"></a><tt class="py-lineno">50</tt>  <tt class="py-line">        <tt class="py-keyword">while</tt> <tt class="py-name">True</tt><tt class="py-op">:</tt> </tt>
+<a name="L51"></a><tt class="py-lineno">51</tt>  <tt class="py-line"> </tt>
+<a name="L52"></a><tt class="py-lineno">52</tt>  <tt class="py-line">            <tt class="py-name">client_socket</tt><tt class="py-op">,</tt> <tt class="py-name">address</tt> <tt class="py-op">=</tt> <tt class="py-name">server_socket</tt><tt class="py-op">.</tt><tt class="py-name">accept</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L53"></a><tt class="py-lineno">53</tt>  <tt class="py-line">            <tt id="link-27" class="py-name"><a title="sessions.client.main.LOG
+sessions.client.protocol.LOG
+sessions.common.LOG
+sessions.server.main.LOG
+sessions.server.protocol.LOG" class="py-name" href="#" onclick="return doclink('link-27', 'LOG', 'link-14');">LOG</a></tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">'Connection made with {0}'</tt><tt class="py-op">.</tt><tt class="py-name">format</tt><tt class="py-op">(</tt><tt class="py-name">address</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L54"></a><tt class="py-lineno">54</tt>  <tt class="py-line"> </tt>
+<a name="L55"></a><tt class="py-lineno">55</tt>  <tt class="py-line">            <tt class="py-name">client_thread</tt> <tt class="py-op">=</tt> <tt class="py-name">Thread</tt><tt class="py-op">(</tt><tt class="py-name">target</tt><tt class="py-op">=</tt><tt id="link-28" class="py-name" targets="Function sessions.server.protocol.client_handler()=sessions.server.protocol-module.html#client_handler"><a title="sessions.server.protocol.client_handler" class="py-name" href="#" onclick="return doclink('link-28', 'client_handler', 'link-28');">client_handler</a></tt><tt class="py-op">(</tt><tt class="py-name">client_socket</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L56"></a><tt class="py-lineno">56</tt>  <tt class="py-line">            <tt class="py-name">client_thread</tt><tt class="py-op">.</tt><tt class="py-name">daemon</tt> <tt class="py-op">=</tt> <tt class="py-name">True</tt> </tt>
+<a name="L57"></a><tt class="py-lineno">57</tt>  <tt class="py-line">            <tt class="py-name">client_thread</tt><tt class="py-op">.</tt><tt class="py-name">start</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L58"></a><tt class="py-lineno">58</tt>  <tt class="py-line"> </tt>
+<a name="L59"></a><tt class="py-lineno">59</tt>  <tt class="py-line">    <tt class="py-keyword">except</tt> <tt class="py-name">KeyboardInterrupt</tt><tt class="py-op">:</tt> </tt>
+<a name="L60"></a><tt class="py-lineno">60</tt>  <tt class="py-line">        <tt id="link-29" class="py-name"><a title="sessions.client.main.LOG
+sessions.client.protocol.LOG
+sessions.common.LOG
+sessions.server.main.LOG
+sessions.server.protocol.LOG" class="py-name" href="#" onclick="return doclink('link-29', 'LOG', 'link-14');">LOG</a></tt><tt class="py-op">.</tt><tt class="py-name">info</tt><tt class="py-op">(</tt><tt class="py-string">'Shutting down...'</tt><tt class="py-op">)</tt> </tt>
+<a name="L61"></a><tt class="py-lineno">61</tt>  <tt class="py-line"> </tt>
+<a name="L62"></a><tt class="py-lineno">62</tt>  <tt class="py-line">    <tt class="py-keyword">except</tt> <tt class="py-name">Exception</tt> <tt class="py-keyword">as</tt> <tt class="py-name">e</tt><tt class="py-op">:</tt> </tt>
+<a name="L63"></a><tt class="py-lineno">63</tt>  <tt class="py-line">        <tt id="link-30" class="py-name"><a title="sessions.client.main.LOG
+sessions.client.protocol.LOG
+sessions.common.LOG
+sessions.server.main.LOG
+sessions.server.protocol.LOG" class="py-name" href="#" onclick="return doclink('link-30', 'LOG', 'link-14');">LOG</a></tt><tt class="py-op">.</tt><tt class="py-name">info</tt><tt class="py-op">(</tt><tt class="py-string">'Error occured: shutting down...'</tt><tt class="py-op">)</tt> </tt>
+<a name="L64"></a><tt class="py-lineno">64</tt>  <tt class="py-line">        <tt class="py-keyword">raise</tt> <tt class="py-name">e</tt> </tt>
+<a name="L65"></a><tt class="py-lineno">65</tt>  <tt class="py-line">    <tt class="py-keyword">finally</tt><tt class="py-op">:</tt> </tt>
+<a name="L66"></a><tt class="py-lineno">66</tt>  <tt class="py-line"> </tt>
+<a name="L67"></a><tt class="py-lineno">67</tt>  <tt class="py-line">        <tt class="py-name">server_socket</tt><tt class="py-op">.</tt><tt class="py-name">shutdown</tt><tt class="py-op">(</tt><tt id="link-31" class="py-name" targets="Variable sessions.client.main.SHUT_RDWR=sessions.client.main-module.html#SHUT_RDWR,Variable sessions.server.main.SHUT_RDWR=sessions.server.main-module.html#SHUT_RDWR"><a title="sessions.client.main.SHUT_RDWR
+sessions.server.main.SHUT_RDWR" class="py-name" href="#" onclick="return doclink('link-31', 'SHUT_RDWR', 'link-31');">SHUT_RDWR</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L68"></a><tt class="py-lineno">68</tt>  <tt class="py-line">        <tt class="py-name">server_socket</tt><tt class="py-op">.</tt><tt class="py-name">close</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L69"></a><tt class="py-lineno">69</tt>  <tt class="py-line"> </tt>
+<a name="L70"></a><tt class="py-lineno">70</tt>  <tt class="py-line">        <tt id="link-32" class="py-name"><a title="sessions.client.main.LOG
+sessions.client.protocol.LOG
+sessions.common.LOG
+sessions.server.main.LOG
+sessions.server.protocol.LOG" class="py-name" href="#" onclick="return doclink('link-32', 'LOG', 'link-14');">LOG</a></tt><tt class="py-op">.</tt><tt class="py-name">info</tt><tt class="py-op">(</tt><tt class="py-string">'Shuting down threads'</tt><tt class="py-op">)</tt> </tt>
+<a name="L71"></a><tt class="py-lineno">71</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">user</tt> <tt class="py-keyword">in</tt> <tt id="link-33" class="py-name" targets="Variable sessions.server.main.USERS=sessions.server.main-module.html#USERS,Variable sessions.server.protocol.USERS=sessions.server.protocol-module.html#USERS"><a title="sessions.server.main.USERS
+sessions.server.protocol.USERS" class="py-name" href="#" onclick="return doclink('link-33', 'USERS', 'link-33');">USERS</a></tt><tt class="py-op">.</tt><tt class="py-name">values</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L72"></a><tt class="py-lineno">72</tt>  <tt class="py-line">            <tt class="py-name">user</tt><tt class="py-op">.</tt><tt class="py-name">_is_running</tt> <tt class="py-op">=</tt> <tt class="py-name">False</tt> </tt>
+<a name="L73"></a><tt class="py-lineno">73</tt>  <tt class="py-line"> </tt>
+<a name="L74"></a><tt class="py-lineno">74</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">file_handler</tt> <tt class="py-keyword">in</tt> <tt id="link-34" class="py-name"><a title="sessions.server.main.FILES
+sessions.server.protocol.FILES" class="py-name" href="#" onclick="return doclink('link-34', 'FILES', 'link-20');">FILES</a></tt><tt class="py-op">.</tt><tt class="py-name">values</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L75"></a><tt class="py-lineno">75</tt>  <tt class="py-line">            <tt class="py-name">file_handler</tt><tt class="py-op">.</tt><tt class="py-name">_is_running</tt> <tt class="py-op">=</tt> <tt class="py-name">False</tt> </tt>
+<a name="L76"></a><tt class="py-lineno">76</tt>  <tt class="py-line"> </tt>
+<a name="L77"></a><tt class="py-lineno">77</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">file_handler</tt> <tt class="py-keyword">in</tt> <tt id="link-35" class="py-name"><a title="sessions.server.main.FILES
+sessions.server.protocol.FILES" class="py-name" href="#" onclick="return doclink('link-35', 'FILES', 'link-20');">FILES</a></tt><tt class="py-op">.</tt><tt class="py-name">values</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L78"></a><tt class="py-lineno">78</tt>  <tt class="py-line">            <tt class="py-name">file_handler</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L79"></a><tt class="py-lineno">79</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="sessions-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            >Colted</th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Wed Nov  9 14:44:20 2016
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>
