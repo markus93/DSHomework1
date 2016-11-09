@@ -46,16 +46,24 @@ def client_test():
     err, file, queue = open_file('test', own[0])
     print("Error: " + str(err) + ", file content: " + str(file))
 
+    # Add new editor
+   # err = add_editor('test', own[0], 'test2')
+    print("Error:" + str(err))
+
+    err, file, queue = open_file('test2', own[0])
+    print("Error: " + str(err) + ", file content: " + str(file))
+
     # Lock certain line for editing
     err, lock = lock_line('test', 'testfile', 0)
+    print("Error: " + str(err) + ", lock: " + str(lock))
+
+    # Try to lock this line again
+    err, lock = lock_line('test2', 'testfile', 0)
     print("Error: " + str(err) + ", lock: " + str(lock))
 
     # Edit line
     err = send_new_edit('test', 'testfile', 0, 'Hello!')
     print("Error: " + str(err))
-
-    err, file, _ = open_file('test', own[0])
-    print(str(err) + " file content: " + str(file))
 
     stop_listening()
 
@@ -105,15 +113,16 @@ def open_file(user, fname):
     """
     global listen_socket, threadListen
 
-    # Closes previous listening session TODO is old thread closed?
+    # Closes previous listening session
     if listen_socket is not None:
         stop_listening()
 
     err, file_cont, listen_socket = open_file_req(server, user, fname)
     q = Queue()
 
-    threadListen = Thread(target=listen_for_edits(server, listen_socket, q))
-    threadListen.start()  # TODO problem with listening
+    if file_cont:
+        threadListen = listen_for_edits(server, listen_socket, q)
+        threadListen.start()
 
     return err, file_cont, q
 
@@ -187,6 +196,8 @@ def stop_listening():
     Disconnects from server (listening socket)
     """
     global listen_socket
+    threadListen._is_running = False
+
     disconnect(listen_socket)
     listen_socket = None
     # TODO clear queue?

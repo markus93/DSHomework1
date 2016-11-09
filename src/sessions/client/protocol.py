@@ -1,7 +1,8 @@
 # Imports----------------------------------------------------------------------
 from socket import error as soc_err
-from socket import socket, AF_INET, SOCK_STREAM, SHUT_RDWR
+from socket import socket, AF_INET, SOCK_STREAM, SHUT_RDWR, timeout
 from sessions.common import *
+from threading import Thread
 
 
 def __connect(srv):
@@ -133,7 +134,8 @@ def __handle_request(srv, args, r_type, end_connection=True):
         err = response['status']
 
         if err != RSP_OK:
-            err = ERR_MSGS[err]
+            LOG.error(err)
+            err = response['error_message']
         else:
             err = ""
 
@@ -224,17 +226,14 @@ def open_file_req(srv, user, fname):
     @return: tuple (string:err_code, string: file content, socket: sock)
     @rtype: (str, str, socket._socketobject)
     """
-    """
-    Requests opening given file (user must have access to file)
-    @param srv: tuple ( IP, port ), server socket address
-    @param user: string, username
-    @param fname: string, file name
-    @returns tuple (string:err_code, string: file content, socket: sock)
-    """
 
     args = {'user': user, 'fname': fname}
     err, response, sock = __handle_request(srv, args, REQ_GET_FILE, end_connection=False)
-    file = response['file']
+
+    if err == "":
+        file = response['file']
+    else:
+        file = None
 
     return err, file, sock
 
@@ -330,43 +329,61 @@ def lock_line_req(srv, user, fname, line_no):
     return err, lock
 
 
-def listen_for_edits(srv, sock, q):
-    """
-    Listens for new edits to file and puts them to Queue (for GUI to receive)
-    @param srv: server socket address
-    @type srv: (str, int)
-    @param sock: server socket
-    @type sock: socket._socketobject
-    @param q: queue
-    @type q: Queue.Queue
-    @return:
-    @rtype:
-    """
+class listen_for_edits(Thread):
 
-    # Loop until disconnected from server
-    while True:
+    def __init__(self, srv, sock, q):
+        """
+       Listens for new edits to file and puts them to Queue (for GUI to receive)
+       @param srv: server socket address
+       @type srv: (str, int)
+       @param sock: server socket
+       @type sock: socket._socketobject
+       @param q: queue
+       @type q: Queue.Queue
+       """
 
-        try:
-            # Waiting for response from server (line number and line content)
-            rsp = tcp_receive(sock)
+        super(listen_for_edits, self).__init__()
 
-        except soc_err as e:
-            # In case we failed in the middle of transfer we should report error
-            LOG.error('Interrupted receiving the data from %s:%d, '
-                      'error: %s' % (srv + (e,)))
-            # ... and close socket
-            disconnect(sock)
-            break
+        self.srv = srv
+        self.sock = sock
+        self.q = q
 
-        err = rsp['status']
-        if err == RSP_OK:
-            # Add tuple (line number, line content) to the queue
-            line_no = rsp['line_no']
-            line_content = rsp['line_content']
-            q.put((line_no, line_content))
+        self._is_running = True
 
-        else:
-            if err in ERR_MSGS.keys():
-                LOG.error('Server response code [%s]: %s' % (err, ERR_MSGS[err]))
+
+    def run(self):
+
+
+        # Loop until disconnected from server
+        while self._is_running:
+
+            try:
+                # Waiting for response from server (line number and line content)
+                rsp = tcp_receive(self.sock, 1)
+
+            except timeout:
+                LOG.debug("Timeout occured")
+                continue
+
+            except soc_err as e:
+                # In case we failed in the middle of transfer we should report error
+                LOG.error('Interrupted receiving the data from %s:%d, '
+                          'error: %s' % (self.srv + (e,)))
+                # ... and close socket
+                disconnect(self.sock)
+                break
+
+            err = rsp['status']
+            if err == RSP_OK:
+                # Add tuple (line number, line content) to the queue
+                line_no = rsp['line_no']
+                line_content = rsp['line_content']
+                self.q.put((line_no, line_content))
+                LOG.debug(str(line_no) + " " + line_content)
+                print "Line: " + line_content
+
             else:
-                LOG.error('Malformed server response [%s]' % err)
+                if err in ERR_MSGS.keys():
+                    LOG.error('Server response code [%s]: %s' % (err, ERR_MSGS[err]))
+                else:
+                    LOG.error('Malformed server response [%s]' % err)

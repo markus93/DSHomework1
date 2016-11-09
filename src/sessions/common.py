@@ -79,7 +79,7 @@ def tcp_send(sock, **data):
     return len(message)
 
 
-def tcp_receive(sock):
+def tcp_receive(sock, timeout=None):
     """
 
     @param sock:
@@ -87,8 +87,9 @@ def tcp_receive(sock):
     @return:
     @rtype: dict[str, str|int|bool|list[str]]
     """
-
+    sock.settimeout(timeout)
     message_size = int(sock.recv(RSP_MESSAGE_SIZE))
+
 
     message = sock.recv(message_size)
     data = json.loads(message)

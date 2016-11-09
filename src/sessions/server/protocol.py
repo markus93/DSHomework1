@@ -346,7 +346,7 @@ class User(Thread):
             try:
                 line_no, line_content, is_new_line = self.notifications.get(timeout=1)
 
-                tcp_send(self.socket, line_no=line_no, line=line_content, is_new_line=is_new_line)
+                tcp_send(self.socket, status=RSP_OK, line_no=line_no, line_content=line_content, is_new_line=is_new_line)
                 LOG.info('User {0} notified of the change at line {1}'.format(self.name, line_no))
 
             except Empty:
