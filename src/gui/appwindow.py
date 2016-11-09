@@ -31,7 +31,7 @@ class app:
 
                 filemenu.add_command(label="Member Files...", command=self.member)
                 filemenu.add_command(label="Master Files..", command=self.master)
-                filemenu.add_command(label="Save", command=self.save_command)
+                #filemenu.add_command(label="Save", command=self.save_command) No need for saving ATM
                 filemenu.add_separator()
                 filemenu.add_command(label="Exit", command=self.exit_command)
                 helpmenu = Menu(menu)
@@ -46,12 +46,14 @@ class app:
                 global window
                 textPad
                 textPad.delete('1.0',END)
-                error, contents = open_file(user,filename)
+                error, contents, queue = open_file(user,filename)
                 if error == "":
                     textPad.insert('1.0', contents)
                     currentfile = filename
-
-                #initialize queue and start reading from server
+                # TODO also lock line for user (so other users couldn't edit that)
+                # TODO add somewhere method which recognises line switching (when user goes from one line to another)
+                    #TODO then new line edit should be sent and next line locked.
+                # TODO Make new thread which calls queue.get() and puts line into rigth place in GUI.
 
          #open new view to input file name
         def new_file(self):
@@ -66,6 +68,7 @@ class app:
         def about_command(self):
                 label = tkMessageBox.showinfo("About", "Home work for Distributed Systems (2016)")
                 self.window.destroy()
+                #TODO destroys file window also for some reason
 
         #open files that user can edit
         def member(self):
@@ -160,7 +163,7 @@ class createFile():
         file = file.replace(" ", "")
 
         if file != "":
-            error_message = create_file(self.username,file+".txt")
+            error_message = create_file(user,file+".txt") #changed it to user from self.username
             if error_message == "":
                 openfile = app()
                 openfile.open(file+".txt")
@@ -190,7 +193,7 @@ class Editor():
         self.list_box_2.grid(row=0, column=0)
         self.list_box_2.pack(side = "right")
         #get all users
-        self.all_users = get_all_users()
+        self.all_users = get_all_users() #TODO just some button "ADD USER" which allows to type in user.
         #get editors for this files
         error_message,self.editors = get_editors(self.selected_file)
         if error_message != "":

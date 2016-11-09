@@ -1,13 +1,14 @@
 # Graphical User Interface main methods
-from tkinter import *
+from Tkinter import *
+import appwindow
 
 trial = 5
 
 
 root = Tk()
-root.geometry('250 x 150')
+root.geometry('250x150')
 root.title ('Enter your login Information')
-def input(parent, label, width=None, **options)
+def input(parent, label, width=None, **options):
     Label(parent, text=label).pack(side=TOP)
     entry = Entry(parent, **options)
     if width:
