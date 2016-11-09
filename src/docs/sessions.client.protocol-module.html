@@ -1,0 +1,1040 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>sessions.client.protocol</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="sessions-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            >Colted</th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="sessions-module.html">Package&nbsp;sessions</a> ::
+        <a href="sessions.client-module.html">Package&nbsp;client</a> ::
+        Module&nbsp;protocol
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="sessions.client.protocol-module.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== MODULE DESCRIPTION ==================== -->
+<h1 class="epydoc">Module protocol</h1><p class="nomargin-top"><span class="codelink"><a href="sessions.client.protocol-pysrc.html">source&nbsp;code</a></span></p>
+<!-- ==================== FUNCTIONS ==================== -->
+<a name="section-Functions"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Functions</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Functions"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">socket._socketobject</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="sessions.client.protocol-module.html#__connect" class="summary-sig-name" onclick="show_private();">__connect</a>(<span class="summary-sig-arg">srv</span>)</span><br />
+      Create socket, connect to server</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="sessions.client.protocol-pysrc.html#__connect">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="sessions.client.protocol-module.html#disconnect" class="summary-sig-name">disconnect</a>(<span class="summary-sig-arg">sock</span>)</span><br />
+      Disconnect from the server, close the TCP socket</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="sessions.client.protocol-pysrc.html#disconnect">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">dict[str, str|int|bool|list[str]]</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="sessions.client.protocol-module.html#__request" class="summary-sig-name" onclick="show_private();">__request</a>(<span class="summary-sig-arg">srv</span>,
+        <span class="summary-sig-arg">r_type</span>,
+        <span class="summary-sig-arg">args</span>,
+        <span class="summary-sig-arg">sock</span>)</span><br />
+      Send request to server, receive response</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="sessions.client.protocol-pysrc.html#__request">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">(str, dict[str, str|int|bool|list[str]])</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="sessions.client.protocol-module.html#__handle_request" class="summary-sig-name" onclick="show_private();">__handle_request</a>(<span class="summary-sig-arg">srv</span>,
+        <span class="summary-sig-arg">args</span>,
+        <span class="summary-sig-arg">r_type</span>,
+        <span class="summary-sig-arg">end_connection</span>=<span class="summary-sig-default">True</span>)</span><br />
+      Handles Server connection, calls method request and  handles error 
+      messages</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="sessions.client.protocol-pysrc.html#__handle_request">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">(str, list[str], list[str])</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="sessions.client.protocol-module.html#get_files_req" class="summary-sig-name">get_files_req</a>(<span class="summary-sig-arg">srv</span>,
+        <span class="summary-sig-arg">user</span>)</span><br />
+      Requests files list from server, divided into owned and available 
+      files</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="sessions.client.protocol-pysrc.html#get_files_req">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">(str, list[str])</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="sessions.client.protocol-module.html#get_editors_req" class="summary-sig-name">get_editors_req</a>(<span class="summary-sig-arg">srv</span>,
+        <span class="summary-sig-arg">fname</span>)</span><br />
+      Requests editors (users who have access to file)</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="sessions.client.protocol-pysrc.html#get_editors_req">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">str</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="sessions.client.protocol-module.html#create_file_req" class="summary-sig-name">create_file_req</a>(<span class="summary-sig-arg">srv</span>,
+        <span class="summary-sig-arg">user</span>,
+        <span class="summary-sig-arg">fname</span>)</span><br />
+      Requests creating new file</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="sessions.client.protocol-pysrc.html#create_file_req">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">(str, str, socket._socketobject)</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="sessions.client.protocol-module.html#open_file_req" class="summary-sig-name">open_file_req</a>(<span class="summary-sig-arg">srv</span>,
+        <span class="summary-sig-arg">user</span>,
+        <span class="summary-sig-arg">fname</span>)</span><br />
+      Requests opening given file (user must have access to file)</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="sessions.client.protocol-pysrc.html#open_file_req">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">str</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="sessions.client.protocol-module.html#add_editor_req" class="summary-sig-name">add_editor_req</a>(<span class="summary-sig-arg">srv</span>,
+        <span class="summary-sig-arg">user</span>,
+        <span class="summary-sig-arg">fname</span>,
+        <span class="summary-sig-arg">edname</span>)</span><br />
+      Requests adding new editor to file (new user who can edit file)</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="sessions.client.protocol-pysrc.html#add_editor_req">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">str</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="sessions.client.protocol-module.html#remove_editor_req" class="summary-sig-name">remove_editor_req</a>(<span class="summary-sig-arg">srv</span>,
+        <span class="summary-sig-arg">user</span>,
+        <span class="summary-sig-arg">edname</span>,
+        <span class="summary-sig-arg">fname</span>)</span><br />
+      Requests removing editor from file (user who can edit file)</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="sessions.client.protocol-pysrc.html#remove_editor_req">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">str</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="sessions.client.protocol-module.html#send_new_edit_req" class="summary-sig-name">send_new_edit_req</a>(<span class="summary-sig-arg">srv</span>,
+        <span class="summary-sig-arg">user</span>,
+        <span class="summary-sig-arg">fname</span>,
+        <span class="summary-sig-arg">line_no</span>,
+        <span class="summary-sig-arg">line_content</span>,
+        <span class="summary-sig-arg">is_new_line</span>)</span><br />
+      Requests writing edited line to file</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="sessions.client.protocol-pysrc.html#send_new_edit_req">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">(str, bool)</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="sessions.client.protocol-module.html#lock_line_req" class="summary-sig-name">lock_line_req</a>(<span class="summary-sig-arg">srv</span>,
+        <span class="summary-sig-arg">user</span>,
+        <span class="summary-sig-arg">fname</span>,
+        <span class="summary-sig-arg">line_no</span>)</span><br />
+      Requests locking a line to given user</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="sessions.client.protocol-pysrc.html#lock_line_req">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="sessions.client.protocol-module.html#listen_for_edits" class="summary-sig-name">listen_for_edits</a>(<span class="summary-sig-arg">srv</span>,
+        <span class="summary-sig-arg">sock</span>,
+        <span class="summary-sig-arg">q</span>)</span><br />
+      Listens for new edits to file and puts them to Queue (for GUI to 
+      receive)</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="sessions.client.protocol-pysrc.html#listen_for_edits">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES ==================== -->
+<a name="section-Variables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Variables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="sessions.client.protocol-module.html#CTR_MSGS" class="summary-name">CTR_MSGS</a> = <code title="{'1': 'List currently uploaded files',
+ '2': 'List user for specified file)',
+ '3': 'Return whole file contents',
+ '4': 'Make a new file, add user as owner',
+ '5': 'Lock the specified line to your user',
+ '6': 'Edit a line inside a file',
+ '7': 'Add an editor to a file owned by you',
+ '8': 'Remove an editor from a file owned by you'}"><code class="variable-group">{</code><code class="variable-quote">'</code><code class="variable-string">1</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">List currently uploaded files</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">2</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">List u</code><code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="DEFAULT_SERVER_INET_ADDR"></a><span class="summary-name">DEFAULT_SERVER_INET_ADDR</span> = <code title="'127.0.0.1'"><code class="variable-quote">'</code><code class="variable-string">127.0.0.1</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="DEFAULT_SERVER_PORT"></a><span class="summary-name">DEFAULT_SERVER_PORT</span> = <code title="7777">7777</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="sessions.client.protocol-module.html#ERR_MSGS" class="summary-name">ERR_MSGS</a> = <code title="{'0': 'No Error',
+ '1': 'Malformed message',
+ '2': 'Message not found by iD',
+ '3': 'Unknown control code',
+ '4': 'Transmission Error',
+ '5': 'Can\'t connect to server'}"><code class="variable-group">{</code><code class="variable-quote">'</code><code class="variable-string">0</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">No Error</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">1</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">Malformed message</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">2</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">M</code><code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="FORMAT"></a><span class="summary-name">FORMAT</span> = <code title="'%(asctime)-15s %(levelname)s %(message)s'"><code class="variable-quote">'</code><code class="variable-string">%(asctime)-15s %(levelname)s %(message)s</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="LOG"></a><span class="summary-name">LOG</span> = <code title="logging.getLogger()">logging.getLogger()</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="MSG_FIELD_SEP"></a><span class="summary-name">MSG_FIELD_SEP</span> = <code title="':'"><code class="variable-quote">'</code><code class="variable-string">:</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="REQ_ADD_EDITOR"></a><span class="summary-name">REQ_ADD_EDITOR</span> = <code title="'7'"><code class="variable-quote">'</code><code class="variable-string">7</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="REQ_EDIT_FILE"></a><span class="summary-name">REQ_EDIT_FILE</span> = <code title="'6'"><code class="variable-quote">'</code><code class="variable-string">6</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="REQ_GET_FILE"></a><span class="summary-name">REQ_GET_FILE</span> = <code title="'3'"><code class="variable-quote">'</code><code class="variable-string">3</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="REQ_GET_LOCK"></a><span class="summary-name">REQ_GET_LOCK</span> = <code title="'5'"><code class="variable-quote">'</code><code class="variable-string">5</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="REQ_GET_USERS"></a><span class="summary-name">REQ_GET_USERS</span> = <code title="'2'"><code class="variable-quote">'</code><code class="variable-string">2</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="REQ_LIST_FILES"></a><span class="summary-name">REQ_LIST_FILES</span> = <code title="'1'"><code class="variable-quote">'</code><code class="variable-string">1</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="REQ_MAKE_FILE"></a><span class="summary-name">REQ_MAKE_FILE</span> = <code title="'4'"><code class="variable-quote">'</code><code class="variable-string">4</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="REQ_REMOVE_EDITOR"></a><span class="summary-name">REQ_REMOVE_EDITOR</span> = <code title="'8'"><code class="variable-quote">'</code><code class="variable-string">8</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="RSP_BADFORMAT"></a><span class="summary-name">RSP_BADFORMAT</span> = <code title="'1'"><code class="variable-quote">'</code><code class="variable-string">1</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="RSP_CANT_CONNECT"></a><span class="summary-name">RSP_CANT_CONNECT</span> = <code title="'5'"><code class="variable-quote">'</code><code class="variable-string">5</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="RSP_ERRTRANSM"></a><span class="summary-name">RSP_ERRTRANSM</span> = <code title="'4'"><code class="variable-quote">'</code><code class="variable-string">4</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="RSP_MESSAGE_SIZE"></a><span class="summary-name">RSP_MESSAGE_SIZE</span> = <code title="8">8</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="RSP_MSGNOTFOUND"></a><span class="summary-name">RSP_MSGNOTFOUND</span> = <code title="'2'"><code class="variable-quote">'</code><code class="variable-string">2</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="RSP_OK"></a><span class="summary-name">RSP_OK</span> = <code title="'0'"><code class="variable-quote">'</code><code class="variable-string">0</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="RSP_UNKNCONTROL"></a><span class="summary-name">RSP_UNKNCONTROL</span> = <code title="'3'"><code class="variable-quote">'</code><code class="variable-string">3</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__package__"></a><span class="summary-name">__package__</span> = <code title="'sessions.client'"><code class="variable-quote">'</code><code class="variable-string">sessions.client</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTION DETAILS ==================== -->
+<a name="section-FunctionDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Function Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-FunctionDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__connect"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__connect</span>(<span class="sig-arg">srv</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="sessions.client.protocol-pysrc.html#__connect">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Create socket, connect to server</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>srv</code></strong> ((str, int)) - server's address</li>
+    </ul></dd>
+    <dt>Returns: socket._socketobject</dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="disconnect"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">disconnect</span>(<span class="sig-arg">sock</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="sessions.client.protocol-pysrc.html#disconnect">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Disconnect from the server, close the TCP socket</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>sock</code></strong> (socket._socketobject) - TCP socket to close</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="__request"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__request</span>(<span class="sig-arg">srv</span>,
+        <span class="sig-arg">r_type</span>,
+        <span class="sig-arg">args</span>,
+        <span class="sig-arg">sock</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="sessions.client.protocol-pysrc.html#__request">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Send request to server, receive response</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>srv</code></strong> ((str, int)) - server socket address</li>
+        <li><strong class="pname"><code>r_type</code></strong> (str) - request type</li>
+        <li><strong class="pname"><code>args</code></strong> (dict[str, str|int|bool|list[str]]) - request parameters/data</li>
+        <li><strong class="pname"><code>sock</code></strong> (socket._socketobject)</li>
+    </ul></dd>
+    <dt>Returns: dict[str, str|int|bool|list[str]]</dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="__handle_request"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__handle_request</span>(<span class="sig-arg">srv</span>,
+        <span class="sig-arg">args</span>,
+        <span class="sig-arg">r_type</span>,
+        <span class="sig-arg">end_connection</span>=<span class="sig-default">True</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="sessions.client.protocol-pysrc.html#__handle_request">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handles Server connection, calls method request and  handles error 
+  messages</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>srv</code></strong> ((str, int)) - server socket address</li>
+        <li><strong class="pname"><code>args</code></strong> (dict[str, str|int|bool|list[str]]) - dictionary, request parameters/data</li>
+        <li><strong class="pname"><code>r_type</code></strong> (str) - request type</li>
+        <li><strong class="pname"><code>end_connection</code></strong> (bool) - boolean, whether connection left open or not</li>
+    </ul></dd>
+    <dt>Returns: (str, dict[str, str|int|bool|list[str]])</dt>
+        <dd>tuple ( string:err_code, dictionary:response arguments )</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="get_files_req"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">get_files_req</span>(<span class="sig-arg">srv</span>,
+        <span class="sig-arg">user</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="sessions.client.protocol-pysrc.html#get_files_req">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Requests files list from server, divided into owned and available 
+  files</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>srv</code></strong> ((str, int)) - server socket address</li>
+        <li><strong class="pname"><code>user</code></strong> (str) - username</li>
+    </ul></dd>
+    <dt>Returns: (str, list[str], list[str])</dt>
+        <dd>tuple ( string:err_code, list:owned files, list: available files)</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="get_editors_req"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">get_editors_req</span>(<span class="sig-arg">srv</span>,
+        <span class="sig-arg">fname</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="sessions.client.protocol-pysrc.html#get_editors_req">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Requests editors (users who have access to file)</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>srv</code></strong> ((str, int)) - server socket address</li>
+        <li><strong class="pname"><code>fname</code></strong> (str) - file name</li>
+    </ul></dd>
+    <dt>Returns: (str, list[str])</dt>
+        <dd>tuple ( string:err_code, list:editors)</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="create_file_req"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">create_file_req</span>(<span class="sig-arg">srv</span>,
+        <span class="sig-arg">user</span>,
+        <span class="sig-arg">fname</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="sessions.client.protocol-pysrc.html#create_file_req">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Requests creating new file</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>srv</code></strong> ((str, int)) - server socket address</li>
+        <li><strong class="pname"><code>user</code></strong> (str) - username</li>
+        <li><strong class="pname"><code>fname</code></strong> (str) - file name</li>
+    </ul></dd>
+    <dt>Returns: str</dt>
+        <dd>err_code</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="open_file_req"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">open_file_req</span>(<span class="sig-arg">srv</span>,
+        <span class="sig-arg">user</span>,
+        <span class="sig-arg">fname</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="sessions.client.protocol-pysrc.html#open_file_req">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Requests opening given file (user must have access to file)</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>srv</code></strong> ((str, int)) - server socket address</li>
+        <li><strong class="pname"><code>user</code></strong> (str) - username</li>
+        <li><strong class="pname"><code>fname</code></strong> (str) - file name</li>
+    </ul></dd>
+    <dt>Returns: (str, str, socket._socketobject)</dt>
+        <dd>tuple (string:err_code, string: file content, socket: sock)</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="add_editor_req"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">add_editor_req</span>(<span class="sig-arg">srv</span>,
+        <span class="sig-arg">user</span>,
+        <span class="sig-arg">fname</span>,
+        <span class="sig-arg">edname</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="sessions.client.protocol-pysrc.html#add_editor_req">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Requests adding new editor to file (new user who can edit file)</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>srv</code></strong> ((str, int)) - server socket address</li>
+        <li><strong class="pname"><code>user</code></strong> (str) - file owner</li>
+        <li><strong class="pname"><code>fname</code></strong> (str) - file name</li>
+        <li><strong class="pname"><code>edname</code></strong> (str) - editors name</li>
+    </ul></dd>
+    <dt>Returns: str</dt>
+        <dd>err_code</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="remove_editor_req"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">remove_editor_req</span>(<span class="sig-arg">srv</span>,
+        <span class="sig-arg">user</span>,
+        <span class="sig-arg">edname</span>,
+        <span class="sig-arg">fname</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="sessions.client.protocol-pysrc.html#remove_editor_req">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Requests removing editor from file (user who can edit file)</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>srv</code></strong> ((str, int)) - server socket address</li>
+        <li><strong class="pname"><code>user</code></strong> (str) - file owner</li>
+        <li><strong class="pname"><code>fname</code></strong> (str) - file name</li>
+        <li><strong class="pname"><code>edname</code></strong> (str) - editors name</li>
+    </ul></dd>
+    <dt>Returns: str</dt>
+        <dd>err_code</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="send_new_edit_req"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">send_new_edit_req</span>(<span class="sig-arg">srv</span>,
+        <span class="sig-arg">user</span>,
+        <span class="sig-arg">fname</span>,
+        <span class="sig-arg">line_no</span>,
+        <span class="sig-arg">line_content</span>,
+        <span class="sig-arg">is_new_line</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="sessions.client.protocol-pysrc.html#send_new_edit_req">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Requests writing edited line to file</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>srv</code></strong> ((str, int)) - server socket address</li>
+        <li><strong class="pname"><code>user</code></strong> (str) - username</li>
+        <li><strong class="pname"><code>fname</code></strong> (str) - file name</li>
+        <li><strong class="pname"><code>line_no</code></strong> (int) - line number</li>
+        <li><strong class="pname"><code>line_content</code></strong> (str) - edited line</li>
+        <li><strong class="pname"><code>is_new_line</code></strong> (bool) - Is the line added?</li>
+    </ul></dd>
+    <dt>Returns: str</dt>
+        <dd>err_code</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="lock_line_req"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">lock_line_req</span>(<span class="sig-arg">srv</span>,
+        <span class="sig-arg">user</span>,
+        <span class="sig-arg">fname</span>,
+        <span class="sig-arg">line_no</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="sessions.client.protocol-pysrc.html#lock_line_req">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Requests locking a line to given user</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>srv</code></strong> ((str, int)) - server socket address</li>
+        <li><strong class="pname"><code>user</code></strong> (str) - username</li>
+        <li><strong class="pname"><code>fname</code></strong> (str) - filename</li>
+        <li><strong class="pname"><code>line_no</code></strong> (int) - line number</li>
+    </ul></dd>
+    <dt>Returns: (str, bool)</dt>
+        <dd>tuple (string:err_code, boolean:lock)</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="listen_for_edits"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">listen_for_edits</span>(<span class="sig-arg">srv</span>,
+        <span class="sig-arg">sock</span>,
+        <span class="sig-arg">q</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="sessions.client.protocol-pysrc.html#listen_for_edits">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Listens for new edits to file and puts them to Queue (for GUI to 
+  receive)</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>srv</code></strong> ((str, int)) - server socket address</li>
+        <li><strong class="pname"><code>sock</code></strong> (socket._socketobject) - server socket</li>
+        <li><strong class="pname"><code>q</code></strong> (Queue.Queue) - queue</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== VARIABLES DETAILS ==================== -->
+<a name="section-VariablesDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-VariablesDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="CTR_MSGS"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">CTR_MSGS</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-group">{</code><code class="variable-quote">'</code><code class="variable-string">1</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">List currently uploaded files</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">2</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">List user for specified file)</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">3</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">Return whole file contents</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">4</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">Make a new file, add user as owner</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">5</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">Lock the specified line to your user</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">6</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">Edit a line inside a file</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">7</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">Add an editor to a file owned by you</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">8</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">Remove an editor from a file owned by you</code><code class="variable-quote">'</code><code class="variable-group">}</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="ERR_MSGS"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">ERR_MSGS</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-group">{</code><code class="variable-quote">'</code><code class="variable-string">0</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">No Error</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">1</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">Malformed message</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">2</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">Message not found by iD</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">3</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">Unknown control code</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">4</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">Transmission Error</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">5</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">Can\'t connect to server</code><code class="variable-quote">'</code><code class="variable-group">}</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="sessions-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            >Colted</th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Wed Nov  9 14:44:20 2016
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>
