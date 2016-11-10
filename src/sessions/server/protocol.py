@@ -36,7 +36,7 @@ def client_handler(client_socket):
         try:
             if request['type'] == REQ_LIST_FILES:
 
-                if 'user' not in request:
+                if not check_request_format(request, 'user'):
                     tcp_send(client_socket,
                              status=RSP_BADFORMAT)
 
@@ -47,7 +47,7 @@ def client_handler(client_socket):
 
             elif request['type'] == REQ_GET_USERS:
 
-                if 'user' not in request or 'fname' not in request:
+                if not check_request_format(request, 'user', 'fname'):
                     tcp_send(client_socket,
                              status=RSP_BADFORMAT)
 
@@ -58,7 +58,7 @@ def client_handler(client_socket):
 
             elif request['type'] == REQ_GET_FILE:
 
-                if 'user' not in request or 'fname' not in request:
+                if not check_request_format(request, 'user', 'fname'):
                     tcp_send(client_socket,
                              status=RSP_BADFORMAT)
 
@@ -67,12 +67,12 @@ def client_handler(client_socket):
                              status=RSP_OK,
                              file=get_file(request['user'], request['fname']))
 
-                    USERS[request['user']] = User(client_socket, request['user'])
+                    USERS[request['user']] = User(client_socket, request['user'], request['fname'])
                     USERS[request['user']].start()
 
             elif request['type'] == REQ_MAKE_FILE:
 
-                if 'user' not in request or 'fname' not in request:
+                if not check_request_format(request, 'user', 'fname'):
                     tcp_send(client_socket,
                              status=RSP_BADFORMAT)
 
@@ -85,7 +85,7 @@ def client_handler(client_socket):
 
             elif request['type'] == REQ_GET_LOCK:
 
-                if 'user' not in request or 'fname' not in request or 'line_no' not in request:
+                if not check_request_format(request, 'user', 'fname', 'line_no'):
                     tcp_send(client_socket,
                              status=RSP_BADFORMAT)
 
@@ -97,8 +97,7 @@ def client_handler(client_socket):
 
             elif request['type'] == REQ_EDIT_FILE:
 
-                if 'user' not in request or 'fname' not in request or 'line_no' not in request \
-                        or 'line_content' not in request:
+                if not check_request_format(request, 'user', 'fname', 'line_no', 'line_content'):
                     tcp_send(client_socket,
                              status=RSP_BADFORMAT)
 
@@ -112,7 +111,7 @@ def client_handler(client_socket):
 
             elif request['type'] == REQ_ADD_EDITOR:
 
-                if 'user' not in request or 'fname' not in request or 'editor' not in request:
+                if not check_request_format(request, 'user', 'fname', 'editor'):
                     tcp_send(client_socket,
                              status=RSP_BADFORMAT)
 
@@ -125,7 +124,7 @@ def client_handler(client_socket):
 
             elif request['type'] == REQ_REMOVE_EDITOR:
 
-                if 'user' not in request or 'fname' not in request or 'editor' not in request:
+                if not check_request_format(request, 'user', 'fname', 'editor'):
                     tcp_send(client_socket,
                              status=RSP_BADFORMAT)
 
@@ -148,6 +147,18 @@ def client_handler(client_socket):
             client_socket.close()
 
     return run
+
+
+def check_request_format(request, *fields):
+    """Check if all the required fields are present in the request.
+    @param request:
+    @type request: dict[str, str|int|bool|list[str]]
+    @param fields:
+    @type fields: list[str]
+    @return:
+    @rtype: bool
+    """
+    return all(field in request for field in fields)
 
 
 def list_files(user):
@@ -173,7 +184,7 @@ def list_files(user):
 
 
 def list_users(user, fname):
-    """Users, who can edit the file
+    """Users, who can edit the file.
     @param user: Request maker
     @type user: str
     @param fname: filename
@@ -334,16 +345,20 @@ def remove_editor(user, fname, editor):
 
 
 class User(Thread):
-    def __init__(self, user_socket, name):
-        """
+    def __init__(self, user_socket, name, fname):
+        """Keeps the long-lived TCP connection between the user and server open. Notifies the user about all the changes
+        made to the file.
         @param user_socket: Socket, where to send updates about the file
         @type user_socket: socket._socketobject
         @param name: name of the user
         @type name: str
+        @param fname: name of the file
+        @type fname: str
         """
         super(User, self).__init__()
 
         self.name = name
+        self.fname = fname
         self.socket = user_socket
         self.notifications = Queue()
 
@@ -358,9 +373,11 @@ class User(Thread):
                 line_no, line_content, is_new_line = self.notifications.get(timeout=1)
 
                 try:
-                    tcp_send(self.socket, status=RSP_OK, line_no=line_no, line_content=line_content, is_new_line=is_new_line)
+                    tcp_send(self.socket, status=RSP_OK, line_no=line_no, line_content=line_content,
+                             is_new_line=is_new_line)
                 except socket.error:
                     LOG.info('Connection ended with {0} from client side'.format(self.name))
+                    self.remove()
                     break
 
                 LOG.info('User {0} notified of the change at line {1}'.format(self.name, line_no))
@@ -372,10 +389,29 @@ class User(Thread):
             self.socket.shutdown(socket.SHUT_RDWR)
             self.socket.close()
 
+    def remove(self):
+        """
+        Called after closing the long-lived TCP connection between user and server.
+        Releases the locked line and deletes the user object.
+        @return:
+        @rtype:
+        """
+
+        # Release the lock
+        for line_no, user in FILES[self.fname].locks.items():
+            if user == self.name:
+                del FILES[self.fname].locks[line_no]
+                break
+
+        # Delete the user
+        del USERS[self.name]
+
 
 class FileHandler(Thread):
     def __init__(self, fname, owner, users=None):
-        """
+        """For each file on the server, a FileHandler Thread is made. It is responsible for makeing changes to files
+        and notifying th user through User threads.
+        It also keeps track of all the locked lines in the files.
         @param fname:
         @type fname: str
         @param owner:
