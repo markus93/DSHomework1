@@ -487,6 +487,7 @@ class FileHandler(Thread):
 
         # Release the lock
         for line_no, lock_owner in self.locks.items():
-            if user == self.name:
+            if user == lock_owner:
+                LOG.info(lock_owner + " released lock on line: " + str(line_no))
                 del self.locks[line_no]
                 break
