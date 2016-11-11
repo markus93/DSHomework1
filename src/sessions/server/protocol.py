@@ -319,7 +319,7 @@ def add_editor(user, fname, editor, **kwargs):
         LOG.warning('{0} was trying to access editors of {1} without permissions'.format(user, fname))
         raise ServerException('Must be owner to change editors')
 
-    if user not in FILES[fname].users:
+    if editor not in FILES[fname].users:
         FILES[fname].users.append(editor)
         LOG.info('{0} made {1} an editor of {2}'.format(user, editor, fname))
 
@@ -477,17 +477,18 @@ class FileHandler(Thread):
         return FileHandler, (self.fname, self.owner, self.users)
 
     def release_lock(self, user):
-        """
-
-        @param user:
+        """Release the users lock in this file
+        @param user: User, whose lock is being released
         @type user: str
-        @return:
-        @rtype:
+        @return: Was the lock found
+        @rtype: bool
         """
 
         # Release the lock
         for line_no, lock_owner in self.locks.items():
             if user == lock_owner:
-                LOG.info(lock_owner + " released lock on line: " + str(line_no))
+                LOG.info("{0} released lock on line {1} in file {2}".format(lock_owner, line_no, self.fname))
                 del self.locks[line_no]
-                break
+                return True
+
+        return False

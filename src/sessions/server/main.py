@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 from sessions.server.protocol import *
+import signal
 
 # Info-------------------------------------------------------------------------
 
@@ -45,6 +46,12 @@ def server_main(args):
     LOG.info('Ready for connections')
 
     try:
+        # Windows sucks
+        signal.signal(signal.SIGINT, exit_server)
+        signal.signal(signal.SIGTERM, exit_server)
+        # signal.signal(signal.CTRL_C_EVENT, exit_server)
+        # signal.signal(signal.CTRL_BREAK_EVENT, exit_server)
+
         while True:
 
             client_socket, address = server_socket.accept()
@@ -54,7 +61,7 @@ def server_main(args):
             client_thread.daemon = True
             client_thread.start()
 
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, SystemExit):
         LOG.info('Shutting down...')
 
     except Exception as e:
@@ -74,3 +81,7 @@ def server_main(args):
 
         for file_handler in FILES.values():
             file_handler.join()
+
+
+def exit_server(signum, frame):
+    raise SystemExit
