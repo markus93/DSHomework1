@@ -43,7 +43,7 @@ def client_handler(client_socket):
                 else:
                     tcp_send(client_socket,
                              status=RSP_OK,
-                             **list_files(request['user']))
+                             **list_files(**request))
 
             elif request['type'] == REQ_GET_USERS:
 
@@ -54,7 +54,7 @@ def client_handler(client_socket):
                 else:
                     tcp_send(client_socket,
                              status=RSP_OK,
-                             users=list_users(request['user'], request['fname']))
+                             users=list_users(**request))
 
             elif request['type'] == REQ_GET_FILE:
 
@@ -65,7 +65,7 @@ def client_handler(client_socket):
                 else:
                     tcp_send(client_socket,
                              status=RSP_OK,
-                             file=get_file(request['user'], request['fname']))
+                             file=get_file(**request))
 
                     USERS[request['user']] = User(client_socket, request['user'], request['fname'])
                     USERS[request['user']].start()
@@ -78,7 +78,7 @@ def client_handler(client_socket):
 
                 else:
 
-                    make_file(request['user'], request['fname'])
+                    make_file(**request)
 
                     tcp_send(client_socket,
                              status=RSP_OK)
@@ -93,7 +93,7 @@ def client_handler(client_socket):
 
                     tcp_send(client_socket,
                              status=RSP_OK,
-                             lock=acquire_lock(request['user'], request['fname'], request['line_no']))
+                             lock=acquire_lock(**request))
 
             elif request['type'] == REQ_EDIT_FILE:
 
@@ -103,8 +103,7 @@ def client_handler(client_socket):
 
                 else:
 
-                    edit_line(request['user'], request['fname'], request['line_no'], request['line_content'],
-                              request['is_new_line'])
+                    edit_line(**request)
 
                     tcp_send(client_socket,
                              status=RSP_OK)
@@ -117,7 +116,7 @@ def client_handler(client_socket):
 
                 else:
 
-                    add_editor(request['user'], request['fname'], request['editor'])
+                    add_editor(**request)
 
                     tcp_send(client_socket,
                              status=RSP_OK)
@@ -130,7 +129,7 @@ def client_handler(client_socket):
 
                 else:
 
-                    remove_editor(request['user'], request['fname'], request['editor'])
+                    remove_editor(**request)
 
                     tcp_send(client_socket,
                              status=RSP_OK)
@@ -161,7 +160,7 @@ def check_request_format(request, *fields):
     return all(field in request for field in fields)
 
 
-def list_files(user):
+def list_files(user, **kwargs):
     """List files, that are available to user.
     @param user:
     @type user: str
@@ -183,7 +182,7 @@ def list_files(user):
     return {'owned_files': owned_files, 'available_files': available_files}
 
 
-def list_users(user, fname):
+def list_users(user, fname, **kwargs):
     """Users, who can edit the file.
     @param user: Request maker
     @type user: str
@@ -201,7 +200,7 @@ def list_users(user, fname):
     return FILES[fname].users
 
 
-def get_file(user, fname):
+def get_file(user, fname, **kwargs):
     """Return the whole file content, this request is made once per user at the start of the session.
     An long lived TCP is also made turing this request. (see client_handler)
     @param user: Request makers name
@@ -221,7 +220,7 @@ def get_file(user, fname):
         return f.read()
 
 
-def make_file(user, fname):
+def make_file(user, fname, **kwargs):
     """Make new file, user is marked as owner.
     @param user:
     @type user: str
@@ -244,7 +243,7 @@ def make_file(user, fname):
     LOG.info('{0} made a new file: {1}'.format(user, fname))
 
 
-def acquire_lock(user, fname, line_no):
+def acquire_lock(user, fname, line_no, **kwargs):
     """Acquire lock for a line in a file.
     @param user:
     @type user: str
@@ -264,12 +263,14 @@ def acquire_lock(user, fname, line_no):
         LOG.info('{0} failed to acquire a lock in {1} for line {2}'.format(user, fname, line_no))
         return False
 
+    FILES[fname].release_lock(user)
+
     FILES[fname].locks[line_no] = user
     LOG.info('{0} acquired a lock in {1} for line {2}'.format(user, fname, line_no))
     return True
 
 
-def edit_line(user, fname, line_no, line_content, is_new_line=False):
+def edit_line(user, fname, line_no, line_content, is_new_line=False, **kwargs):
     """Edit a line in a file, the edit request is added to a queue.
     @param user:
     @type user: str
@@ -281,8 +282,8 @@ def edit_line(user, fname, line_no, line_content, is_new_line=False):
     @type line_content: str
     @param is_new_line:
     @type is_new_line: bool
-    @return: True on success
-    @rtype: bool
+    @return:
+    @rtype:
     """
 
     if FILES[fname].owner != user and user not in FILES[fname].users:
@@ -302,7 +303,7 @@ def edit_line(user, fname, line_no, line_content, is_new_line=False):
     return True
 
 
-def add_editor(user, fname, editor):
+def add_editor(user, fname, editor, **kwargs):
     """Give editing rights to a user.
     @param user:
     @type user: str
@@ -323,7 +324,7 @@ def add_editor(user, fname, editor):
         LOG.info('{0} made {1} an editor of {2}'.format(user, editor, fname))
 
 
-def remove_editor(user, fname, editor):
+def remove_editor(user, fname, editor, **kwargs):
     """Remove editing rights from a user.
     @param user:
     @type user: str
@@ -397,11 +398,7 @@ class User(Thread):
         @rtype:
         """
 
-        # Release the lock
-        for line_no, user in FILES[self.fname].locks.items():
-            if user == self.name:
-                del FILES[self.fname].locks[line_no]
-                break
+        FILES[self.fname].release_lock(self.name)
 
         # Delete the user
         del USERS[self.name]
@@ -478,3 +475,18 @@ class FileHandler(Thread):
 
     def __reduce__(self):
         return FileHandler, (self.fname, self.owner, self.users)
+
+    def release_lock(self, user):
+        """
+
+        @param user:
+        @type user: str
+        @return:
+        @rtype:
+        """
+
+        # Release the lock
+        for line_no, lock_owner in self.locks.items():
+            if user == self.name:
+                del self.locks[line_no]
+                break
