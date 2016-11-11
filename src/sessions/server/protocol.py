@@ -17,122 +17,33 @@ USERS = dict()
 """@type: dict[str, User]"""
 
 
-class ServerException(Exception):
-    pass
-
-
 def client_handler(client_socket):
     """Handle any request made by the client
     @param client_socket:
     @type client_socket: socket._socketobject
     @return:
-    @rtype:
+    @rtype: () -> None
     """
 
     def run():
+        """
+        Does the actual request handling.
+        @return:
+        @rtype:
+        """
 
         request = tcp_receive(client_socket)
 
         try:
-            if request['type'] == REQ_LIST_FILES:
 
-                if not check_request_format(request, 'user'):
-                    tcp_send(client_socket,
-                             status=RSP_BADFORMAT)
+            if request['type'] in REQUESTS:
+                request_handler, required_fields = REQUESTS[request['type']]
 
-                else:
-                    tcp_send(client_socket,
-                             status=RSP_OK,
-                             **list_files(**request))
-
-            elif request['type'] == REQ_GET_USERS:
-
-                if not check_request_format(request, 'user', 'fname'):
-                    tcp_send(client_socket,
-                             status=RSP_BADFORMAT)
+                if not check_request_format(request, *required_fields):
+                    tcp_send(client_socket, status=RSP_BADFORMAT)
 
                 else:
-                    tcp_send(client_socket,
-                             status=RSP_OK,
-                             users=list_users(**request))
-
-            elif request['type'] == REQ_GET_FILE:
-
-                if not check_request_format(request, 'user', 'fname'):
-                    tcp_send(client_socket,
-                             status=RSP_BADFORMAT)
-
-                else:
-                    tcp_send(client_socket,
-                             status=RSP_OK,
-                             file=get_file(**request))
-
-                    USERS[request['user']] = User(client_socket, request['user'], request['fname'])
-                    USERS[request['user']].start()
-
-            elif request['type'] == REQ_MAKE_FILE:
-
-                if not check_request_format(request, 'user', 'fname'):
-                    tcp_send(client_socket,
-                             status=RSP_BADFORMAT)
-
-                else:
-
-                    make_file(**request)
-
-                    tcp_send(client_socket,
-                             status=RSP_OK)
-
-            elif request['type'] == REQ_GET_LOCK:
-
-                if not check_request_format(request, 'user', 'fname', 'line_no'):
-                    tcp_send(client_socket,
-                             status=RSP_BADFORMAT)
-
-                else:
-
-                    tcp_send(client_socket,
-                             status=RSP_OK,
-                             lock=acquire_lock(**request))
-
-            elif request['type'] == REQ_EDIT_FILE:
-
-                if not check_request_format(request, 'user', 'fname', 'line_no', 'line_content'):
-                    tcp_send(client_socket,
-                             status=RSP_BADFORMAT)
-
-                else:
-
-                    edit_line(**request)
-
-                    tcp_send(client_socket,
-                             status=RSP_OK)
-
-            elif request['type'] == REQ_ADD_EDITOR:
-
-                if not check_request_format(request, 'user', 'fname', 'editor'):
-                    tcp_send(client_socket,
-                             status=RSP_BADFORMAT)
-
-                else:
-
-                    add_editor(**request)
-
-                    tcp_send(client_socket,
-                             status=RSP_OK)
-
-            elif request['type'] == REQ_REMOVE_EDITOR:
-
-                if not check_request_format(request, 'user', 'fname', 'editor'):
-                    tcp_send(client_socket,
-                             status=RSP_BADFORMAT)
-
-                else:
-
-                    remove_editor(**request)
-
-                    tcp_send(client_socket,
-                             status=RSP_OK)
+                    tcp_send(client_socket, status=RSP_OK, **request_handler(**request))
 
             else:
                 tcp_send(client_socket, status=RSP_UNKNCONTROL)
@@ -141,7 +52,12 @@ def client_handler(client_socket):
             LOG.warning('Exception happened during handling the request: {0}'.format(e.message))
             tcp_send(client_socket, status=RSP_BADFORMAT, error_message=e.message)
 
-        if request['type'] != REQ_GET_FILE:
+        if request['type'] == REQ_GET_FILE:
+            # Keep the connection open
+            USERS[request['user']] = User(client_socket, request['user'], request['fname'])
+            USERS[request['user']].start()
+
+        else:
             client_socket.shutdown(socket.SHUT_RDWR)
             client_socket.close()
 
@@ -189,7 +105,7 @@ def list_users(user, fname, **kwargs):
     @param fname: filename
     @type fname: str
     @return: List of usernames
-    @rtype: list[str]
+    @rtype: dict[str: list[str]]
     """
 
     if FILES[fname].owner != user:
@@ -197,7 +113,7 @@ def list_users(user, fname, **kwargs):
         raise ServerException('Must be owner to see editors')
 
     LOG.info('Listing users for {0}'.format(fname))
-    return FILES[fname].users
+    return {'users': FILES[fname].users}
 
 
 def get_file(user, fname, **kwargs):
@@ -208,7 +124,7 @@ def get_file(user, fname, **kwargs):
     @param fname: Filename, whose content is requested
     @type fname: str
     @return: Contents of the file
-    @rtype: str
+    @rtype: dict[str, str]
     """
 
     if FILES[fname].owner != user and user not in FILES[fname].users:
@@ -217,7 +133,7 @@ def get_file(user, fname, **kwargs):
 
     with open(DIRECTORY_FILES + os.sep + fname, 'r') as f:
         LOG.info('{0}-s content was given to {1}'.format(fname, user))
-        return f.read()
+        return {'file': f.read()}
 
 
 def make_file(user, fname, **kwargs):
@@ -227,7 +143,7 @@ def make_file(user, fname, **kwargs):
     @param fname:
     @type fname: str
     @return:
-    @rtype:
+    @rtype: dict
     """
 
     if fname in FILES:
@@ -242,6 +158,8 @@ def make_file(user, fname, **kwargs):
 
     LOG.info('{0} made a new file: {1}'.format(user, fname))
 
+    return {}
+
 
 def acquire_lock(user, fname, line_no, **kwargs):
     """Acquire lock for a line in a file.
@@ -252,7 +170,7 @@ def acquire_lock(user, fname, line_no, **kwargs):
     @param line_no:
     @type line_no: int
     @return: Was the lock successfully made?
-    @rtype: bool
+    @rtype: dict[str, bool]
     """
 
     if FILES[fname].owner != user and user not in FILES[fname].users:
@@ -261,13 +179,13 @@ def acquire_lock(user, fname, line_no, **kwargs):
 
     if FILES[fname].locks.get(line_no, user) != user:
         LOG.info('{0} failed to acquire a lock in {1} for line {2}'.format(user, fname, line_no))
-        return False
+        return {'lock': False}
 
     FILES[fname].release_lock(user)
 
     FILES[fname].locks[line_no] = user
     LOG.info('{0} acquired a lock in {1} for line {2}'.format(user, fname, line_no))
-    return True
+    return {'lock': True}
 
 
 def edit_line(user, fname, line_no, line_content, is_new_line=False, **kwargs):
@@ -283,7 +201,7 @@ def edit_line(user, fname, line_no, line_content, is_new_line=False, **kwargs):
     @param is_new_line:
     @type is_new_line: bool
     @return:
-    @rtype:
+    @rtype: dict
     """
 
     if FILES[fname].owner != user and user not in FILES[fname].users:
@@ -300,7 +218,7 @@ def edit_line(user, fname, line_no, line_content, is_new_line=False, **kwargs):
     FILES[fname].file_changes.put((line_no, line_content, is_new_line, user))
     LOG.info('File change request was made by {0} for {1}'.format(user, fname))
 
-    return True
+    return {}
 
 
 def add_editor(user, fname, editor, **kwargs):
@@ -312,7 +230,7 @@ def add_editor(user, fname, editor, **kwargs):
     @param editor:
     @type editor: str
     @return:
-    @rtype:
+    @rtype: dict
     """
 
     if FILES[fname].owner != user:
@@ -322,6 +240,8 @@ def add_editor(user, fname, editor, **kwargs):
     if editor not in FILES[fname].users:
         FILES[fname].users.append(editor)
         LOG.info('{0} made {1} an editor of {2}'.format(user, editor, fname))
+
+    return {}
 
 
 def remove_editor(user, fname, editor, **kwargs):
@@ -333,7 +253,7 @@ def remove_editor(user, fname, editor, **kwargs):
     @param editor:
     @type editor: str
     @return:
-    @rtype:
+    @rtype: dict
     """
 
     if FILES[fname].owner != user:
@@ -343,6 +263,8 @@ def remove_editor(user, fname, editor, **kwargs):
     if user in FILES[fname].users:
         FILES[fname].users.remove(editor)
         LOG.info('{0} removed {1} from editors of {2}'.format(user, editor, fname))
+
+    return {}
 
 
 class User(Thread):
@@ -381,7 +303,7 @@ class User(Thread):
                     self.remove()
                     break
 
-                LOG.info('User {0} notified of the change at line {1}'.format(self.name, line_no))
+                LOG.info('User {0} notified of the change at line {1} in {2}'.format(self.name, line_no, self.fname))
 
             except Empty:
                 # LOG.debug('Empty queue at user {0}'.format(self.name))
@@ -452,7 +374,14 @@ class FileHandler(Thread):
                                 self.locks[key + 1] = self.locks.pop(key)
 
                     else:
-                        lines[line_no] = line_content
+                        try:
+                            lines[line_no] = line_content
+                        except IndexError:
+                            LOG.warning(
+                                '{0} tried to edit line {1} in {2}, but the file doesn\'t have that many lines'.format(
+                                    editor, line_no, self.fname))
+                            # Don't notify users nor update the file
+                            continue
 
                     f.seek(0)
                     f.truncate()
@@ -460,7 +389,7 @@ class FileHandler(Thread):
                     f.writelines(lines)
 
                 # Notify users
-                for user_name in self.users:
+                for user_name in self.users + [self.owner]:
                     if user_name != editor and user_name in USERS:
                         USERS[user_name].notifications.put((line_no, line_content, is_new_line))
 
@@ -492,3 +421,20 @@ class FileHandler(Thread):
                 return True
 
         return False
+
+
+class ServerException(Exception):
+    pass
+
+
+REQUESTS = {
+    REQ_LIST_FILES: (list_files, ['user']),
+    REQ_GET_USERS: (list_users, ['user', 'fname']),
+    REQ_GET_FILE: (get_file, ['user', 'fname']),
+    REQ_MAKE_FILE: (make_file, ['user', 'fname']),
+    REQ_GET_LOCK: (acquire_lock, ['user', 'fname', 'line_no']),
+    REQ_EDIT_FILE: (edit_line, ['user', 'fname', 'line_no', 'line_content']),
+    REQ_ADD_EDITOR: (add_editor, ['user', 'fname', 'editor']),
+    REQ_REMOVE_EDITOR: (remove_editor, ['user', 'fname', 'editor'])
+}
+"""@type: dict[str, ((dict[str, str|int|bool|list[str]]) -> dict[str, str|bool|list[str]], list[str])]"""

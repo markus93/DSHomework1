@@ -90,7 +90,6 @@ def tcp_receive(sock, timeout=None):
     sock.settimeout(timeout)
     message_size = int(sock.recv(RSP_MESSAGE_SIZE))
 
-
     message = sock.recv(message_size)
     data = json.loads(message)
 

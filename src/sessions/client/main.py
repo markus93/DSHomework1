@@ -43,7 +43,7 @@ def client_test():
     print("Error: " + str(err) + ", owned files: " + str(own) + ", available files: " + str(avb))
 
     # Get file content
-    err, file, queue = open_file('test', own[0])
+    err, file, queue = open_file('test2', 'testfile')
     print("Error: " + str(err) + ", file content: " + str(file))
 
     # Add new editor
@@ -54,15 +54,15 @@ def client_test():
     print("Error: " + str(err) + ", file content: " + str(file))
 
     # Lock certain line for editing
-    err, lock = lock_line('test', 'testfile', 0)
+    err, lock = lock_line('test2', 'testfile', 1)
     print("Error: " + str(err) + ", lock: " + str(lock))
 
     # Try to lock this line again
-    err, lock = lock_line('test2', 'testfile', 0)
+    err, lock = lock_line('test2', 'testfile', 10)
     print("Error: " + str(err) + ", lock: " + str(lock))
 
     # Edit line
-    err = send_new_edit('test', 'testfile', 0, 'Hello!')
+    err = send_new_edit('test2', 'testfile', 10, 'Hello!')
     print("Error: " + str(err))
 
     stop_listening()
