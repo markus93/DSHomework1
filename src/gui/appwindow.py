@@ -67,7 +67,6 @@ class app:
 
         def about_command(self):
                 label = tkMessageBox.showinfo("About", "Home work for Distributed Systems (2016)")
-                self.window.destroy()
                 #TODO destroys file window also for some reason
 
         #open files that user can edit
@@ -188,56 +187,55 @@ class Editor():
         self.list_box_1 = Listbox(self.root, width=50, height=20, selectmode=EXTENDED)
         self.list_box_1.grid(row=0, column=0)
         self.root.title('Control Editor for  ' + self.selected_file)
-        self.list_box_1.pack(side = "left")
-        self.list_box_2 = Listbox(self.root, width=50, height=20, selectmode=EXTENDED)
-        self.list_box_2.grid(row=0, column=0)
-        self.list_box_2.pack(side = "right")
-        #get all users
-        self.all_users = get_all_users() #TODO just some button "ADD USER" which allows to type in user.
+        self.list_box_1.pack()
         #get editors for this files
         error_message,self.editors = get_editors(self.selected_file)
         if error_message != "":
             self.editors= list()
-
-        self.back_button = Button(self.root, text="back", command=self.back)
-        self.back_button.place(relx=0.5, rely=0.9, anchor=CENTER)
         self.add_button = Button(self.root, text="Add Editor >", command=self.Selected)
-        self.add_button.place(relx=0.5, rely=0.5, anchor=CENTER)
-        self.remove_button = Button(self.root, text=" < Remove Editor ", command=self.DeleteSelection)
-        self.remove_button.place(relx=0.5, rely=0.4, anchor=CENTER)
-        self.populate(self.all_users,self.list_box_1)
-        self.populate(self.editors, self.list_box_2)
+        self.add_button.pack(side='left')
+        self.remove_button = Button(self.root, text=" Remove Editor ", command=self.DeleteSelection)
+        self.remove_button.pack(side='right')
+        self.editor_name = Entry(self.root)
+        self.editor_name.pack()
+        self.populate(self.editors,self.list_box_1)
         self.root.mainloop()
+
+
     def populate(self,input,name):
         for item in input:
            name.insert(END,item)
 
-
     def Selected(self):
-        index = self.list_box_1.curselection()[0]
-        seltext = self.list_box_1.get(index)
-        if tkMessageBox.askokcancel("Message", "Do you want to give this user Editor right %s?" % seltext):
-            message = add_editor(self.selected_file,seltext)
-            if message == "":
-                self.editors.insert(0,seltext)
-                self.list_box_2.insert(END,seltext)
-            else:
-                Label = tkMessageBox.showinfo("Error", "Error occured")
+        editor_name = self.editor_name.get()
+        if editor_name != '':
+            if tkMessageBox.askokcancel("Message", "Do you want to give this user Editor right %s?" % editor_name):
+                message = add_editor(self.selected_file,editor_name)
+                if message =="":
+                    self.editors.insert(END,editor_name)
+                    self.list_box_1.insert(END, editor_name)
+                else:
+                    Label = tkMessageBox.showinfo("Error", "Error occured")
 
     def DeleteSelection(self):
-        items = self.list_box_2.curselection()
+        items = self.list_box_1.curselection()
         pos = 0
-        index = self.list_box_2.curselection()[0]
-        seltext = self.list_box_2.get(index)
-        if tkMessageBox.askokcancel("Message", "Are you sure you want to remove user %s?" % seltext):
-            message = remove_editor(self.selected_file,seltext)
-            if message == "":
-                for i in items:
-                    idx = int(i) - pos
-                    self.list_box_2.delete(idx, idx)
-                    pos = pos + 1
+        try:
+
+            index = self.list_box_1.curselection()[0]
+            seltext = self.list_box_1.get(index)
+            if tkMessageBox.askokcancel("Message", "Are you sure you want to remove user %s?" % seltext):
+                message = remove_editor(self.selected_file,seltext)
+                if message == "":
+                    for i in items:
+                        idx = int(i) - pos
+                        self.list_box_2.delete(idx, idx)
+                        pos = pos + 1
             else:
                 Label = tkMessageBox.showinfo("Error", "Error occured")
+        except:
+            print 'nothing selected'
+
     def back(self):
         self.root.destroy()
         callview = view()
@@ -245,6 +243,12 @@ class Editor():
 
 
 loadEditor = Editor()
+
+
+
+
+
+
 
 
 
