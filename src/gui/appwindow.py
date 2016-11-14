@@ -44,7 +44,7 @@ class app:
         def open(self,filename):
                 global currentfile
                 global window
-                textPad
+                #textPad
                 textPad.delete('1.0',END)
                 error, contents, queue = open_file(user,filename)
                 if error == "":
@@ -52,8 +52,8 @@ class app:
                     currentfile = filename
                 # TODO also lock line for user (so other users couldn't edit that)
                 # TODO add somewhere method which recognises line switching (when user goes from one line to another)
-                    #TODO then new line edit should be sent and next line locked.
-                # TODO Make new thread which calls queue.get() and puts line into rigth place in GUI.
+                    # TODO then new line edit should be sent and next line locked.
+                # TODO Make new thread which calls queue.get() and puts line into right place in GUI.
 
          #open new view to input file name
         def new_file(self):
@@ -67,19 +67,18 @@ class app:
 
         def about_command(self):
                 label = tkMessageBox.showinfo("About", "Home work for Distributed Systems (2016)")
-                #TODO destroys file window also for some reason
 
         #open files that user can edit
         def member(self):
-                if len(self.memberfiles):
+                if len(self.memberfiles) == 0:
                         label = tkMessageBox.showinfo("Error message", "No file to open")
-                else :
+                else:
                         callview = view()
                         callview.views(self.memberfiles,user,'member')
 
          #list files that user can invite and delete client
         def master(self):
-                if len(self.userfiles):
+                if len(self.userfiles) == 0:
                         label = tkMessageBox.showinfo("Error message", "You do not own any file at this moment")
                 else:
                         callview = view()
@@ -152,7 +151,7 @@ class createFile():
 
     def newfileview(self,username):
         fileview = Tk()
-        Label(fileview, text = "Create New FIle, you will be the master of this file").grid(row=0)
+        Label(fileview, text = "Create New File, you will be the master of this file").grid(row=0)
         self.filename = Entry(fileview)
         self.filename.grid(row=0, column=1)
         Button(fileview, text='Create File', command=self.create).grid(row=3, column=1, sticky=W, pady=4)
