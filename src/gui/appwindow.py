@@ -25,7 +25,7 @@ class app:
                 window.title('Welcome back '+str(user))
 
                 #create menu option for client
-                menu = Menu(window)
+                menu = Menu(self.window)
                 window.config(menu=menu)
                 filemenu = Menu(menu)
                 menu.add_cascade(label="File", menu=filemenu)
@@ -192,7 +192,7 @@ class Editor():
         self.root.title('Control Editor for  ' + self.selected_file)
         self.list_box_1.pack()
         #get editors for this files
-        error_message,self.editors = get_editors(self.selected_file)
+        error_message,self.editors = get_editors(self.username, self.selected_file)
         if error_message != "":
             self.editors= list()
         self.add_button = Button(self.root, text="Add Editor >", command=self.Selected)
