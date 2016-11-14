@@ -16,6 +16,7 @@ def input(parent, label, width=None, **options):
       return entry
     
 def displaywindow():
+    root.destroy()
     username = user.get()
     displayapp = appwindow.app()
     displayapp.newappwindow(username)
@@ -23,7 +24,7 @@ def displaywindow():
 parent = Frame(root, padx=10, pady=10)
 parent.pack(fill=BOTH, expand=True)
 
-user = input(parent, "Username:", 16, show='*')
+user = input(parent, "Username:", 16)
 login_button = Button(parent, borderwidth=4, text="Login", width=10, pady=8, command=displaywindow)
 
 login_button.pack(side=BOTTOM)
