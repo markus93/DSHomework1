@@ -21,11 +21,11 @@ class app:
 
                 window = Toplevel()
                 window.geometry('700x300')
-                textPad = ScrolledText.ScrolledText(self.window, width=400, height=100)
+                textPad = ScrolledText.ScrolledText(window, width=400, height=100)
                 window.title('Welcome back '+str(user))
 
                 #create menu option for client
-                menu = Menu(self.window)
+                menu = Menu(window)
                 window.config(menu=menu)
                 filemenu = Menu(menu)
                 menu.add_cascade(label="File", menu=filemenu)
@@ -47,7 +47,7 @@ class app:
                 global currentfile
                 #global window
                 #textPad
-                 window.title('You are currently editting'+str(filename))
+                window.title('You are currently editting'+str(filename))
                 textPad.delete('1.0',END)
                 error, contents, queue = open_file(user,filename)
                 if error == "":

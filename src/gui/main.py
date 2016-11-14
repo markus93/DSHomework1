@@ -7,7 +7,7 @@ trial = 5
 
 root = Tk()
 root.geometry('250x150')
-root.title ('Enter your login Information')
+root.title('Enter your login Information')
 def input(parent, label, width=None, **options):
     Label(parent, text=label).pack(side=TOP)
     entry = Entry(parent, **options)
@@ -16,8 +16,8 @@ def input(parent, label, width=None, **options):
       return entry
     
 def displaywindow():
-    root.destroy()
     username = user.get()
+    root.destroy() #TODO problems with that
     displayapp = appwindow.app()
     displayapp.newappwindow(username)
 

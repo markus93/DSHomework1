@@ -8,7 +8,8 @@ from os.path import abspath, sep
 from sys import path, argv
 
 from sessions.client.main import __info, ___VER
-from sessions.client.main import client_test, initialize
+from sessions.client.main import initialize
+from gui import main
 from sessions.common import DEFAULT_SERVER_INET_ADDR,\
     DEFAULT_SERVER_PORT
 
@@ -35,7 +36,5 @@ if __name__ == '__main__':
     #Init client variables
     initialize(args)
 
-    # Run Colted Client TODO temporary testing
-    client_test()
-
-    # TODO add here GUI main
+    # Run Colted GUI
+    main()
