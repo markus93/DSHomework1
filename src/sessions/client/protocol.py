@@ -24,7 +24,7 @@ def __connect(srv):
     except soc_err as e:
         # In case we failed to connect to server, we should report error code
         LOG.error('Can\'t connect to %s:%d, error: %s' % (srv + (e,)))
-        return RSP_CANT_CONNECT, [str(e)]
+        return RSP_CANT_CONNECT
     LOG.info('Client connected to %s:%d' % srv)
     LOG.debug('Local TCP socket is bound on %s:%d' % sock.getsockname())
     return sock
@@ -125,6 +125,8 @@ def __handle_request(srv, args, r_type, end_connection=True):
     # Connecting to server
     sock = __connect(srv)
 
+    # TODO check whether error
+
     # Reading given file
     try:
 
@@ -135,7 +137,10 @@ def __handle_request(srv, args, r_type, end_connection=True):
 
         if err != RSP_OK:
             LOG.error(err)
-            err = response['error_message']
+            if 'error_message' in response:
+                err = response['error_message']
+            else:
+                err = ERR_MSGS[err]
         else:
             err = ""
 
@@ -176,21 +181,26 @@ def get_files_req(srv, user):
     return err, owned_files, available_files
 
 
-def get_editors_req(srv, fname):
+def get_editors_req(srv, user, fname):
     """
     Requests editors (users who have access to file)
     @param srv: server socket address
     @type srv: (str, int)
+    @param user: username
+    @type user: str
     @param fname: file name
     @type fname: str
     @return: tuple ( string:err_code, list:editors)
     @rtype: (str, list[str])
     """
 
-    args = {'fname': fname}
+    args = {'user': user, 'fname': fname}
     err, response = __handle_request(srv, args, REQ_GET_USERS)
 
-    users = response['users']
+    if err == "":
+        users = response['users']
+    else:
+        users = None
 
     return err, users
 
@@ -231,11 +241,11 @@ def open_file_req(srv, user, fname):
     err, response, sock = __handle_request(srv, args, REQ_GET_FILE, end_connection=False)
 
     if err == "":
-        file = response['file']
+        file_cont = response['file']
     else:
-        file = None
+        file_cont = None
 
-    return err, file, sock
+    return err, file_cont, sock
 
 
 def add_editor_req(srv, user, fname, edname):
@@ -324,7 +334,10 @@ def lock_line_req(srv, user, fname, line_no):
     args = {'user': user, 'fname': fname, 'line_no': line_no}
     err, response = __handle_request(srv, args, REQ_GET_LOCK)
 
-    lock = response['lock']
+    if err == "":
+        lock = response['lock']
+    else:
+        lock = None
 
     return err, lock
 

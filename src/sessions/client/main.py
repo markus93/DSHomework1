@@ -32,42 +32,6 @@ def initialize(args):
     server = (args.host, int(args.port))
 
 
-# Temporary testing by client, later add to separate folder
-def client_test():
-    # Create file
-    err = create_file('test', 'testfile')
-    print("Error: " + str(err))
-
-    # Get file list
-    err, own, avb = get_files('test')
-    print("Error: " + str(err) + ", owned files: " + str(own) + ", available files: " + str(avb))
-
-    # Get file content
-    err, file, queue = open_file('test2', 'testfile')
-    print("Error: " + str(err) + ", file content: " + str(file))
-
-    # Add new editor
-    err = add_editor('test', own[0], 'test2')
-    print("Error:" + str(err))
-
-    err, file, queue = open_file('test2', own[0])
-    print("Error: " + str(err) + ", file content: " + str(file))
-
-    # Lock certain line for editing
-    err, lock = lock_line('test2', 'testfile', 1)
-    print("Error: " + str(err) + ", lock: " + str(lock))
-
-    # Try to lock this line again
-    err, lock = lock_line('test2', 'testfile', 10)
-    print("Error: " + str(err) + ", lock: " + str(lock))
-
-    # Edit line
-    err = send_new_edit('test2', 'testfile', 10, 'Hello!')
-    print("Error: " + str(err))
-
-    stop_listening()
-
-
 def get_files(user):
     """Get files owned by user and available for user.
     @param user: username
@@ -78,14 +42,16 @@ def get_files(user):
     return get_files_req(server, user)
 
 
-def get_editors(fname):
+def get_editors(user, fname):
     """Get files owned by user and available for user.
+    @param user: username
+    @type user: str
     @param fname:
     @type fname: str
     @return: tuple ( string:err_description, list:users)
     @rtype: (str, list[str])
     """
-    return get_editors_req(server, fname)
+    return get_editors_req(server, user, fname)
 
 
 def create_file(user, fname):
@@ -154,7 +120,7 @@ def remove_editor(user, fname, edname):
     @return: err_description
     @rtype: str
     """
-    return add_editor_req(server, user, edname, fname)
+    return remove_editor_req(server, user, edname, fname)
 
 
 def send_new_edit(user, fname, line_no, line_content, is_new_line=False):
