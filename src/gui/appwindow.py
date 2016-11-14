@@ -5,26 +5,28 @@ import tkMessageBox
 textPad = None
 user = None
 currentfile = None
+window = None
 
 
 class app:
         def newappwindow(self,username):
                 global textPad
                 global user
+                global window
 
                 #initialize username
                 user = username
                 #call get_files function and retrieve files from server
                 self.error, self.userfiles, self.memberfiles = get_files(username)
 
-                self.window = Toplevel()
-                self.window.geometry('700x300')
+                window = Toplevel()
+                window.geometry('700x300')
                 textPad = ScrolledText.ScrolledText(self.window, width=400, height=100)
-                self.window.title('Welcome back '+str(user))
+                window.title('Welcome back '+str(user))
 
                 #create menu option for client
                 menu = Menu(self.window)
-                self.window.config(menu=menu)
+                window.config(menu=menu)
                 filemenu = Menu(menu)
                 menu.add_cascade(label="File", menu=filemenu)
                 filemenu.add_command(label="New", command=self.new_file)
@@ -39,12 +41,13 @@ class app:
                 helpmenu.add_command(label="About...", command=self.about_command)
 
                 textPad.pack()
-                self.window.mainloop()
+                window.mainloop()
 
         def open(self,filename):
                 global currentfile
-                global window
+                #global window
                 #textPad
+                 window.title('You are currently editting'+str(filename))
                 textPad.delete('1.0',END)
                 error, contents, queue = open_file(user,filename)
                 if error == "":
@@ -150,11 +153,11 @@ lbt = view()
 class createFile():
 
     def newfileview(self,username):
-        fileview = Tk()
-        Label(fileview, text = "Create New File, you will be the master of this file").grid(row=0)
-        self.filename = Entry(fileview)
+        self.fileview = Tk()
+        Label(self.fileview, text = "Create New File, you will be the master of this file").grid(row=0)
+        self.filename = Entry(self.fileview)
         self.filename.grid(row=0, column=1)
-        Button(fileview, text='Create File', command=self.create).grid(row=3, column=1, sticky=W, pady=4)
+        Button(self.fileview, text='Create File', command=self.create).grid(row=3, column=1, sticky=W, pady=4)
 
     def create(self):
         file = (self.filename.get().split(".")[0])
@@ -163,6 +166,7 @@ class createFile():
         if file != "":
             error_message = create_file(user,file+".txt") #changed it to user from self.username
             if error_message == "":
+                self.fileview.destroy()
                 openfile = app()
                 openfile.open(file+".txt")
             else:
