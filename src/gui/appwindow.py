@@ -232,7 +232,7 @@ class Editor():
                 if message == "":
                     for i in items:
                         idx = int(i) - pos
-                        self.list_box_2.delete(idx, idx)
+                        self.list_box_1.delete(idx, idx)
                         pos = pos + 1
             else:
                 Label = tkMessageBox.showinfo("Error", "Error occured")
