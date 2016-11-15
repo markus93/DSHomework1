@@ -16,8 +16,9 @@ def input(parent, label, width=None, **options):
       return entry
     
 def displaywindow():
+    root.withdraw()
     username = user.get()
-    root.destroy() #TODO problems with that
+     #TODO problems with that
     displayapp = appwindow.app()
     displayapp.newappwindow(username)
 
