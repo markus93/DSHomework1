@@ -51,6 +51,9 @@ def client_handler(client_socket):
         except ServerException as e:
             LOG.warning('Exception happened during handling the request: {0}'.format(e.message))
             tcp_send(client_socket, status=RSP_BADFORMAT, error_message=e.message)
+        except KeyError as e:
+            LOG.warning('Exception happened during handling the request: {0}'.format(e.message))
+            tcp_send(client_socket, status=RSP_BADFORMAT, error_message='This file does not exsist.')
 
         if request['type'] == REQ_GET_FILE:
             # Keep the connection open
