@@ -1,5 +1,7 @@
 # custom
 .idea/
+_files/
+_objects
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

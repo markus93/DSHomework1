@@ -8,8 +8,9 @@ from threading import Thread
 
 from sessions.common import *
 
-DIRECTORY_FILES = '_files'
-DIRECTORY_OBJECTS = '_objects'
+STORAGE_DIR = os.path.dirname(os.path.realpath(__file__))
+DIRECTORY_FILES = STORAGE_DIR + os.sep + '_files'
+DIRECTORY_OBJECTS = STORAGE_DIR + os.sep + '_objects'
 
 FILES = dict()
 """@type: dict[str, FileHandler]"""
@@ -263,9 +264,29 @@ def remove_editor(user, fname, editor, **kwargs):
         LOG.warning('{0} was trying to access editors of {1} without permissions'.format(user, fname))
         raise ServerException('Must be owner to change editors')
 
-    if user in FILES[fname].users:
+    if editor in FILES[fname].users:
         FILES[fname].users.remove(editor)
         LOG.info('{0} removed {1} from editors of {2}'.format(user, editor, fname))
+
+    return {}
+
+
+def delete_file(user, fname, **kwargs):
+    """Delete file from server
+    @param user:
+    @type user: str
+    @param fname:
+    @type fname: str
+    @return:
+    @rtype:
+    """
+
+    if FILES[fname].owner != user:
+        LOG.warning('{0} was trying to access editors of {1} without permissions'.format(user, fname))
+        raise ServerException('Must be owner to delete file')
+
+    os.remove(DIRECTORY_FILES + os.sep + fname)
+    del FILES[fname]
 
     return {}
 
@@ -323,10 +344,13 @@ class User(Thread):
         @rtype:
         """
 
-        FILES[self.fname].release_lock(self.name)
+        try:
+            FILES[self.fname].release_lock(self.name)
 
-        # Delete the user
-        del USERS[self.name]
+            # Delete the user
+            del USERS[self.name]
+        except KeyError:
+            pass
 
 
 class FileHandler(Thread):
@@ -369,7 +393,7 @@ class FileHandler(Thread):
                     lines = f.readlines()
 
                     if is_new_line:
-                        lines.insert(line_no, line_content)
+                        lines.insert(line_no-1, line_content)
 
                         # Update locks
                         for key in sorted(self.locks.keys(), reverse=True):
@@ -378,7 +402,7 @@ class FileHandler(Thread):
 
                     else:
                         try:
-                            lines[line_no] = line_content
+                            lines[line_no-1] = line_content
                         except IndexError:
                             LOG.warning(
                                 '{0} tried to edit line {1} in {2}, but the file doesn\'t have that many lines'.format(

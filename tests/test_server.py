@@ -3,7 +3,7 @@
 import os
 import sys
 from unittest import TestCase
-import logging
+import time
 
 sys.path.insert(0, os.path.abspath('../src/'))
 
@@ -19,6 +19,9 @@ class ServerTests(TestCase):
         FILES['testfile1'] = FileHandler('testfile1', 'testuser1', ['testuser2', 'testuser3'])
         FILES['testfile2'] = FileHandler('testfile2', 'testuser1', [])
         FILES['testfile3'] = FileHandler('testfile3', 'testuser2', ['testuser1'])
+
+        if not os.path.exists(DIRECTORY_FILES):
+            os.makedirs(DIRECTORY_FILES)
 
     def test_check_request_format(self):
         self.assertTrue(check_request_format({'type': '1', 'fname': 'testfile'}, 'fname'))
@@ -42,8 +45,8 @@ class ServerTests(TestCase):
         self.assertItemsEqual(owned, [])
         self.assertItemsEqual(available, ['testfile1'])
 
-        owned = list_files('testuser4')['owned_files']
-        available = list_files('testuser4')['available_files']
+        owned = list_files('testuser_not_avilable')['owned_files']
+        available = list_files('testuser_not_avilable')['available_files']
         self.assertItemsEqual(owned, [])
         self.assertItemsEqual(available, [])
 
@@ -56,3 +59,42 @@ class ServerTests(TestCase):
             list_users('testuser2', 'testfile2')
 
         self.assertItemsEqual(['testuser2', 'testuser3'], list_users('testuser1', 'testfile1')['users'])
+
+    def test_add_editor(self):
+
+        with self.assertRaises(ServerException):
+            add_editor('testuser2', 'testfile1', 'testuser4')
+
+        with self.assertRaises(ServerException):
+            add_editor('testuser2', 'testfile2', 'testuser4')
+
+        add_editor('testuser1', 'testfile1', 'testuser4')
+        self.assertItemsEqual(['testuser2', 'testuser3', 'testuser4'], list_users('testuser1', 'testfile1')['users'])
+
+    def test_remove_editor(self):
+
+        with self.assertRaises(ServerException):
+            remove_editor('testuser2', 'testfile1', 'testuser3')
+
+        with self.assertRaises(ServerException):
+            remove_editor('testuser2', 'testfile2', 'testuser4')
+
+        remove_editor('testuser1', 'testfile1', 'testuser3')
+        self.assertItemsEqual(['testuser2'], list_users('testuser1', 'testfile1')['users'])
+
+    def test_file_editing(self):
+
+        with self.assertRaises(ServerException):
+            get_file('testuser2', 'testfile2')
+
+        self.assertEqual(make_file('testuser1', 'testfile4'), {})
+
+        with self.assertRaises(ServerException):
+            edit_line('testuser1', 'testfile4', 1, 'This line wont appear')
+
+        self.assertTrue(acquire_lock('testuser1', 'testfile4', 1))
+        edit_line('testuser1', 'testfile4', 1, 'This line will appear')
+        time.sleep(1)  # This must be here
+        self.assertEqual('This line will appear\n', get_file('testuser1', 'testfile4')['file'])
+
+        self.assertEqual(delete_file('testuser1', 'testfile4'), {})
