@@ -21,7 +21,6 @@ class app:
 
                 window = Toplevel()
                 window.geometry('700x300')
-                textPad = ScrolledText.ScrolledText(window, width=400, height=100)
                 window.title('Welcome back '+str(user))
 
                 #create menu option for client
@@ -40,7 +39,12 @@ class app:
                 menu.add_cascade(label="Help", menu=helpmenu)
                 helpmenu.add_command(label="About...", command=self.about_command)
 
-                textPad.pack()
+                textPad = ReadonlyText(window)
+                sb = Scrollbar(window, orient="vertical", command=textPad.yview)
+                textPad.configure(yscrollcommand=sb.set)
+                sb.pack(side="left", fill="y")
+                textPad.pack(side="right", fill="both", expand=True)
+                textPad.tag_configure("locked", foreground="grey")
                 window.mainloop()
 
         def open(self,filename):
@@ -51,12 +55,72 @@ class app:
                 textPad.delete('1.0',END)
                 error, contents, queue = open_file(user,filename)
                 if error == "":
-                    textPad.insert('1.0', contents)
-                    currentfile = filename
-                # TODO also lock line for user (so other users couldn't edit that)
-                # TODO add somewhere method which recognises line switching (when user goes from one line to another)
-                    # TODO then new line edit should be sent and next line locked.
-                # TODO Make new thread which calls queue.get() and puts line into right place in GUI.
+                    textPad.insert('2.0', contents)
+                currentfile = filename
+
+                textPad.bind('<Key>', self.new_line)
+                textPad.bind('<Return>', self.send)
+
+                
+
+        def new_line(self, event):
+                index = textPad.index(INSERT)
+                pos = int(float(index))
+                let = str(float(pos))
+                last_pos = textPad.index('end')
+                err, reply = lock_line(user, currentfile, pos)
+
+
+                
+                if err == "":
+                    if reply == False:
+                        if (float(pos) == 1.0):
+                            textPad.insert('1.0',' ','locked')
+                        textPad.delete('insert-1c')
+                        if (float(last_pos)-1) == float(let) :
+                            textPad.insert('end', '\n', 'locked')
+                        """else:
+
+                            textPad.insert('end', ' ')"""
+                        print 'line locked'
+                    else:
+                        textPad.tag_delete('locked',let, str(pos)+'.end')
+                        print 'line not locked'
+                else:
+                    print 'error message'
+        def send(self,event):
+                index = textPad.index(INSERT)
+                pos = int(float(index))
+                let = str(float(pos))
+                last_pos = textPad.index('end')
+                err, reply = lock_line(user, currentfile, pos)
+                word = textPad.get(str(float(pos)), str(pos) + '.end')
+                
+                if err == "":
+                    if reply == False:
+                        if (float(pos) == 1.0):
+                            textPad.insert('1.0', ' ', 'locked')
+
+                        textPad.delete('insert-1c')
+
+                        if (float(last_pos) - 1) == float(let):
+                            textPad.insert('end', '\n', 'locked')
+                 
+                        print 'line locked'
+                    else:
+                        if word != '':
+                            try:
+                                print word
+                                send_new_edit(user, currentfile,pos,word,False)
+                            except:
+                                print 'Error occured'
+                            #textPad.tag_delete('locked', let, str(pos) + '.end')
+                            print word
+                else:
+                    print 'error message'
+
+
+                                # TODO Make new thread which calls queue.get() and puts line into right place in GUI.
 
          #open new view to input file name
         def new_file(self):
@@ -251,7 +315,70 @@ loadEditor = Editor()
 
 
 
+class ReadonlyText(Text):
+    '''A text widget that doesn't permit inserts and deletes in regions tagged with "locked"'''
+    def __init__(self, *args, **kwargs):
+        Text.__init__(self, *args, **kwargs)
 
+        # this code creates a proxy that will intercept
+        # each actual insert and delete.
+        self.tk.eval(WIDGET_PROXY)
+
+        # this code replaces the low level tk widget
+        # with the proxy
+        widget = str(self)
+        self.tk.eval('''
+            rename {widget} _{widget}
+            interp alias {{}} ::{widget} {{}} widget_proxy _{widget}
+        '''.format(widget=widget))
+
+WIDGET_PROXY = '''
+if {[llength [info commands widget_proxy]] == 0} {
+    # Tcl code to implement a text widget proxy that disallows
+    # insertions and deletions in regions marked with "locked"
+    proc widget_proxy {actual_widget args} {
+        set command [lindex $args 0]
+        set args [lrange $args 1 end]
+        if {$command == "insert"} {
+            set index [lindex $args 0]
+            if [_is_locked $actual_widget $index "$index+1c"] {
+                bell
+                return ""
+            }
+        }
+        if {$command == "delete"} {
+            foreach {index1 index2} $args {
+                if {[_is_locked $actual_widget $index1 $index2]} {
+                    bell
+                    return ""
+                }
+            }
+        }
+        # if we passed the previous checks, allow the command to
+        # run normally
+        $actual_widget $command {*}$args
+    }
+
+    proc _is_locked {widget index1 index2} {
+        # return true if any text in the range between
+        # index1 and index2 has the tag "locked"
+        set result false
+        if {$index2 eq ""} {set index2 "$index1+1c"}
+        # see if "locked" is applied to any character in the
+        # range. There's probably a more efficient way to do this, but
+        # this is Good Enough
+        for {set index $index1} \
+            {[$widget compare $index < $index2]} \
+            {set index [$widget index "$index+1c"]} {
+                if {"locked" in [$widget tag names $index]} {
+                    set result true
+                    break
+                }
+            }
+        return $result
+    }
+}
+'''
 
 
 
