@@ -366,6 +366,7 @@ class listen_for_edits(Thread):
 
     def run(self):
 
+        LOG.debug("Started listening for edits")
 
         # Loop until disconnected from server
         while self._is_running:
@@ -375,7 +376,6 @@ class listen_for_edits(Thread):
                 rsp = tcp_receive(self.sock, 1)
 
             except timeout:
-                LOG.debug("Timeout occured")
                 continue
 
             except soc_err as e:

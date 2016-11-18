@@ -6,6 +6,7 @@ textPad = None
 user = None
 currentfile = None
 window = None
+threadWaitForEdit = None
 
 
 class app:
@@ -39,7 +40,7 @@ class app:
                 menu.add_cascade(label="Help", menu=helpmenu)
                 helpmenu.add_command(label="About...", command=self.about_command)
 
-                textPad = ReadonlyText(window)
+                #textPad = ReadonlyText(window)
                 sb = Scrollbar(window, orient="vertical", command=textPad.yview)
                 textPad.configure(yscrollcommand=sb.set)
                 sb.pack(side="left", fill="y")
@@ -49,6 +50,7 @@ class app:
 
         def open(self,filename):
                 global currentfile
+                global threadWaitForEdit
                 #global window
                 #textPad
                 window.title('You are currently editting '+str(filename))
@@ -56,6 +58,11 @@ class app:
                 error, contents, queue = open_file(user,filename)
                 if error == "":
                     textPad.insert('2.0', contents)
+                    threadWaitForEdit = wait_for_edits(queue)
+                    threadWaitForEdit.start()
+                    # in order to stop the thread (ie if closed the program), insert following line:
+                    # threadWaitForEdit._is_running = False
+
                 currentfile = filename
 
                 textPad.bind('<Key>', self.new_line)
@@ -119,8 +126,6 @@ class app:
                 else:
                     print 'error message'
 
-
-                                # TODO Make new thread which calls queue.get() and puts line into right place in GUI.
 
          #open new view to input file name
         def new_file(self):
@@ -312,6 +317,29 @@ class Editor():
 
 loadEditor = Editor()
 
+class wait_for_edits(Thread):
+
+    def __init__(self, q):
+        """
+       Tries to get edits from Queue (blocking) and puts them into file in GUI
+       @param q: queue
+       @type q: Queue.Queue
+       """
+
+        super(listen_for_edits, self).__init__()
+        self.q = q
+        self._is_running = True
+
+
+    def run(self):
+
+        # Loop until program is closed from server
+        while self._is_running:
+
+            line_no, line_content = self.q.get()
+            print "Line: " + str(line_no) + ": " + line_content
+
+            #TODO add this line to GUI!!!
 
 
 
@@ -331,6 +359,7 @@ class ReadonlyText(Text):
             rename {widget} _{widget}
             interp alias {{}} ::{widget} {{}} widget_proxy _{widget}
         '''.format(widget=widget))
+
 
 WIDGET_PROXY = '''
 if {[llength [info commands widget_proxy]] == 0} {
