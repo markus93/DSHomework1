@@ -40,7 +40,7 @@ class app:
                 menu.add_cascade(label="Help", menu=helpmenu)
                 helpmenu.add_command(label="About...", command=self.about_command)
 
-                #textPad = ReadonlyText(window)
+                textPad = ReadonlyText(window)
                 sb = Scrollbar(window, orient="vertical", command=textPad.yview)
                 textPad.configure(yscrollcommand=sb.set)
                 sb.pack(side="left", fill="y")
@@ -56,6 +56,7 @@ class app:
                 window.title('You are currently editting '+str(filename))
                 textPad.delete('1.0',END)
                 error, contents, queue = open_file(user,filename)
+                print error + " " + contents
                 if error == "":
                     textPad.insert('2.0', contents)
                     threadWaitForEdit = wait_for_edits(queue)
@@ -94,7 +95,7 @@ class app:
                         textPad.tag_delete('locked',let, str(pos)+'.end')
                         print 'line not locked'
                 else:
-                    print 'error message'
+                    print err
         def send(self,event):
                 index = textPad.index(INSERT)
                 pos = int(float(index))
@@ -124,7 +125,7 @@ class app:
                             #textPad.tag_delete('locked', let, str(pos) + '.end')
                             print word
                 else:
-                    print 'error message'
+                    print err
 
 
          #open new view to input file name
@@ -241,7 +242,7 @@ class createFile():
                 openfile = app()
                 openfile.open(file+".txt")
             else:
-                Label = tkMessageBox.showinfo("Error", "Error occurred while creating file")
+                Label = tkMessageBox.showinfo("Error", error_message)
         else:
             Label = tkMessageBox.showinfo("Error", "Invalid Text Input")
 
@@ -288,7 +289,7 @@ class Editor():
                     self.editors.insert(0,editor_name)
                     self.list_box_1.insert(0, editor_name)
                 else:
-                    Label = tkMessageBox.showinfo("Error", "Error occured")
+                    Label = tkMessageBox.showinfo("Error", message)
 
     def DeleteSelection(self):
         items = self.list_box_1.curselection()
@@ -304,8 +305,8 @@ class Editor():
                         idx = int(i) - pos
                         self.list_box_1.delete(idx, idx)
                         pos = pos + 1
-            else:
-                Label = tkMessageBox.showinfo("Error", "Error occured")
+                else:
+                    Label = tkMessageBox.showinfo("Error", message)
         except:
             print 'nothing selected'
 
@@ -326,7 +327,7 @@ class wait_for_edits(Thread):
        @type q: Queue.Queue
        """
 
-        super(listen_for_edits, self).__init__()
+        super(wait_for_edits, self).__init__()
         self.q = q
         self._is_running = True
 

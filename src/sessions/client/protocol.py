@@ -393,7 +393,6 @@ class listen_for_edits(Thread):
                 line_content = rsp['line_content']
                 self.q.put((line_no, line_content))
                 LOG.debug(str(line_no) + " " + line_content)
-                print "Line: " + line_content
 
             else:
                 if err in ERR_MSGS.keys():
