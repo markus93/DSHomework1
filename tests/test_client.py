@@ -33,7 +33,7 @@ class ClientTests(TestCase):
 
 
     # Test file creating, new file, file with same name
-    def test_file_creating(self):
+    def _test_file_creating(self):
         status = create_file('user1', 'file1')
         self.assertEqual(status, "")  # Should only return empty err
         status = create_file('user1', 'file1')
@@ -41,7 +41,7 @@ class ClientTests(TestCase):
 
 
     # Test file opening, whether such file exists, accessing unauthorized file
-    def test_file_opening(self):
+    def _test_file_opening(self):
         create_file('user1', 'file1')
         # Normal file opening
         status, _, _ = open_file('user1', 'file1')
@@ -50,15 +50,15 @@ class ClientTests(TestCase):
         status, _, _ = open_file('user2', 'file1')
         self.assertEqual(status, "Don't have rights to access file1")
         # Opening non-existing file
-        #status, _, _ = open_file('user1', 'file2')  # TODO file existing is not controlled
-        #self.assertEqual(status, "File file1 does not exist")
+        status, _, _ = open_file('user1', 'file2')  # TODO file existing is not controlled
+        self.assertEqual(status, "This file does not exist.")
 
         # Stop edits listening thread properly
         stop_listening()
 
 
     # Test editor (user) adding - adding twice, add owner as editor
-    def test_editor_adding(self):
+    def _test_editor_adding(self):
         create_file('user1', 'file1')
         #Add editor (user) normally)
         status = add_editor('user1', 'file1', 'user2')
@@ -75,7 +75,7 @@ class ClientTests(TestCase):
 
 
     # Editor deleting - delete owner, delete editor twice
-    def test_editor_removing(self):
+    def _test_editor_removing(self):
         create_file('user1', 'file1')
         add_editor('user1', 'file1', 'user2')
         # Remove editor normally
@@ -92,7 +92,7 @@ class ClientTests(TestCase):
         self.assertEqual(status, "Must be owner to change editors")
 
     # Test file listing for different scenarios
-    def test_file_listing(self):
+    def _test_file_listing(self):
         create_file('user1', 'file1')
         create_file('user1', 'file2')
         create_file('user2', 'file3')
@@ -114,7 +114,7 @@ class ClientTests(TestCase):
         self.assertItemsEqual(available, [])
 
     # Test locking rows
-    def test_locks(self):
+    def _test_locks(self):
         create_file('user1', 'file1')
         add_editor('user1', 'file1', 'user2')
         send_new_edit('user1', 'file1', 0, "abc", True)
@@ -146,7 +146,7 @@ class ClientTests(TestCase):
         self.assertTrue(lock)
 
     # Test editor (user) listing
-    def test_get_editors(self):
+    def _test_get_editors(self):
         create_file('user1', 'file1')
         add_editor('user1', 'file1', 'user2')
         add_editor('user1', 'file1', 'user3')
@@ -163,7 +163,12 @@ class ClientTests(TestCase):
 
     # Test sending line changes
     def test_edit_line(self):
-        pass
+        create_file('user1', 'file1')
+        lock_line('user1', 'file1', 0)
+        status = send_new_edit('user1', 'file1', 0, 'new line!')
+        self.assertEqual(status, "")
+        status, content, _ = open_file('user1', 'file1')
+        #print "Status " + status + " content: " + content
 
 
 

@@ -43,6 +43,9 @@ def disconnect(sock):
     # be no I/O descriptor
     try:
         sock.fileno()
+    except AttributeError:
+        LOG.debug('Socket is null')
+        return
     except soc_err:
         LOG.debug('Socket closed already ...')
         return
@@ -125,6 +128,9 @@ def __handle_request(srv, args, r_type, end_connection=True):
     # Connecting to server
     sock = __connect(srv)
 
+    if sock == RSP_CANT_CONNECT:
+        return ERR_MSGS[RSP_CANT_CONNECT], None, None
+
     # TODO check whether error
 
     # Reading given file
@@ -155,9 +161,9 @@ def __handle_request(srv, args, r_type, end_connection=True):
         # Disconnect from server
         disconnect(sock)
 
-        return err, response
+        return err, response, None
     else:
-        # If not disconnected return sock also
+        # If not disconnected return sock also, only used inside client
         return err, response, sock
 
 
@@ -173,10 +179,13 @@ def get_files_req(srv, user):
     """
 
     args = {'user': user}
-    err, response = __handle_request(srv, args, REQ_LIST_FILES)
+    err, response, _ = __handle_request(srv, args, REQ_LIST_FILES)
 
-    owned_files = response['owned_files']
-    available_files = response['available_files']
+    if err == "":
+        owned_files = response['owned_files']
+        available_files = response['available_files']
+    else:
+        return err, None, None
 
     return err, owned_files, available_files
 
@@ -195,7 +204,7 @@ def get_editors_req(srv, user, fname):
     """
 
     args = {'user': user, 'fname': fname}
-    err, response = __handle_request(srv, args, REQ_GET_USERS)
+    err, response, _ = __handle_request(srv, args, REQ_GET_USERS)
 
     if err == "":
         users = response['users']
@@ -219,7 +228,7 @@ def create_file_req(srv, user, fname):
     """
 
     args = {'user': user, 'fname': fname}
-    err, _ = __handle_request(srv, args, REQ_MAKE_FILE)
+    err, _, _ = __handle_request(srv, args, REQ_MAKE_FILE)
 
     return err
 
@@ -264,7 +273,7 @@ def add_editor_req(srv, user, fname, edname):
     """
 
     args = {'user': user, 'fname': fname, 'editor': edname}
-    err, _ = __handle_request(srv, args, REQ_ADD_EDITOR)
+    err, _, _ = __handle_request(srv, args, REQ_ADD_EDITOR)
 
     return err
 
@@ -285,7 +294,7 @@ def remove_editor_req(srv, user, edname, fname):
     """
 
     args = {'user': user, 'fname': fname, 'editor': edname}
-    err, _ = __handle_request(srv, args, REQ_REMOVE_EDITOR)
+    err, _, _ = __handle_request(srv, args, REQ_REMOVE_EDITOR)
 
     return err
 
@@ -311,7 +320,7 @@ def send_new_edit_req(srv, user, fname, line_no, line_content, is_new_line):
 
     args = {'user': user, 'fname': fname, 'line_no': line_no, 'line_content': line_content, 'is_new_line': is_new_line}
 
-    err, _ = __handle_request(srv, args, REQ_EDIT_FILE)
+    err, _, _ = __handle_request(srv, args, REQ_EDIT_FILE)
 
     return err
 
@@ -332,7 +341,7 @@ def lock_line_req(srv, user, fname, line_no):
     """
 
     args = {'user': user, 'fname': fname, 'line_no': line_no}
-    err, response = __handle_request(srv, args, REQ_GET_LOCK)
+    err, response, _ = __handle_request(srv, args, REQ_GET_LOCK)
 
     if err == "":
         lock = response['lock']

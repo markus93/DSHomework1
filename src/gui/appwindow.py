@@ -21,6 +21,9 @@ class app:
         # call get_files function and retrieve files from server
         self.error, self.userfiles, self.memberfiles = get_files(username)
 
+        if self.error != "":
+            label = tkMessageBox.showinfo("Error message", self.error)
+
         window = Toplevel()
         window.geometry('700x300')
         window.title('Welcome back ' + str(user))
@@ -54,7 +57,7 @@ class app:
         if tkMessageBox.askokcancel("Quit", "Do you really want to quit?"):
             if threadWaitForEdit != None:
                 threadWaitForEdit._is_running = False
-                stop_listening()
+            stop_listening()
             window.destroy()
 
     def open(self, filename):
@@ -75,8 +78,14 @@ class app:
 
         currentfile = filename
 
-        textPad.bind('<Key>', self.new_line)
+        # TODO add UP and DOWN, BACKSPACE to check new line
+        textPad.bind('<Up>', self.new_line)
+        textPad.bind('<Down>', self.new_line)
+        textPad.bind('<BackSpace>', self.new_line)
+
         textPad.bind('<Return>', self.send)
+
+        #TODO add thread that sends line edit every 2s
 
     def new_line(self, event):
         index = textPad.index(INSERT)
@@ -118,10 +127,10 @@ class app:
 
                 print 'line locked'
             else:
-                if word != '':
+                if word != None:
                     try:
                         print word
-                        send_new_edit(user, currentfile, pos, word,True)
+                        send_new_edit(user, currentfile, pos, word, True)
                     except:
                         print 'Error occured'
                     # textPad.tag_delete('locked', let, str(pos) + '.end')
@@ -138,9 +147,10 @@ class app:
 
     # close connection
     def exit_command(self):
-
         if tkMessageBox.askokcancel("Quit", "Do you really want to quit?"):
             stop_listening()
+            if threadWaitForEdit != None:
+                threadWaitForEdit._is_running = False
 
     def about_command(self):
         label = tkMessageBox.showinfo("About", "Home work for Distributed Systems (2016)")

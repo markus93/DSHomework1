@@ -161,9 +161,9 @@ def stop_listening():
     """
     Disconnects from server (listening socket)
     """
-    global listen_socket
-    threadListen._is_running = False
+    global listen_socket, threadListen
+    if threadListen != None:
+        threadListen._is_running = False
 
     disconnect(listen_socket)
     listen_socket = None
-    # TODO clear queue?
