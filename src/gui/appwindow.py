@@ -104,10 +104,10 @@ class app:
         index = textPad.index(INSERT)
         pos = int(float(index))
         let = str(float(pos))
+        endline = textPad.index(str(pos)+".0 lineend")
         last_pos = textPad.index('end')
         err, reply = lock_line(user, currentfile, pos)
         word = textPad.get(str(float(pos)), str(pos) + '.end')
-
         if err == "":
             if reply == False:
                 textPad.tag_add('locked', let, str(pos) + '.end')
@@ -120,8 +120,18 @@ class app:
             else:
                 if word != '':
                     try:
-                        print word
-                        send_new_edit(user, currentfile, pos, word,True)
+                        if index != endline:
+                            part_1 = textPad.get(str(float(pos)),str(index))
+                            part_2 = textPad.get(str(index), str(pos) + '.end')
+                            send_new_edit(user, currentfile, pos,part_1,False)
+                            #lock_line(user, currentfile,pos+1)
+                            send_new_edit(user,currentfile,pos+1,part_2,True)
+                            print 'this is part_1 %s'%part_1
+                            print 'this is part 2 %s'%part_2
+                            print pos+1
+                        else:
+
+                            send_new_edit(user,currentfile,pos,word,True)
                     except:
                         print 'Error occured'
                     # textPad.tag_delete('locked', let, str(pos) + '.end')
@@ -147,6 +157,7 @@ class app:
 
     # open files that user can edit
     def member(self):
+        self.error, self.userfiles, self.memberfiles = get_files(user)
         if len(self.memberfiles) == 0:
             label = tkMessageBox.showinfo("Error message", "No file to open")
         else:
@@ -156,6 +167,7 @@ class app:
             # list files that user can invite and delete client
 
     def master(self):
+        self.error, self.userfiles, self.memberfiles = get_files(user)
         if len(self.userfiles) == 0:
             label = tkMessageBox.showinfo("Error message", "You do not own any file at this moment")
         else:
@@ -165,6 +177,7 @@ class app:
 
 class view:
     def views(self, files, username, type):
+
         self.username = username
         self.root = Tk()
         self.type = type
@@ -297,7 +310,6 @@ class Editor():
         items = self.list_box_1.curselection()
         pos = 0
         try:
-
             index = self.list_box_1.curselection()[0]
             seltext = self.list_box_1.get(index)
             if tkMessageBox.askokcancel("Message", "Are you sure you want to remove user %s?" % seltext):
