@@ -28,6 +28,7 @@ REQ_GET_LOCK = '5'
 REQ_EDIT_FILE = '6'
 REQ_ADD_EDITOR = '7'
 REQ_REMOVE_EDITOR = '8'
+REQ_DELETE_LINE = '9'
 
 CTR_MSGS = {REQ_LIST_FILES: 'List currently uploaded files',
             REQ_GET_USERS: 'List user for specified file)',
@@ -36,7 +37,8 @@ CTR_MSGS = {REQ_LIST_FILES: 'List currently uploaded files',
             REQ_GET_LOCK: 'Lock the specified line to your user',
             REQ_EDIT_FILE: 'Edit a line inside a file',
             REQ_ADD_EDITOR: 'Add an editor to a file owned by you',
-            REQ_REMOVE_EDITOR: 'Remove an editor from a file owned by you'
+            REQ_REMOVE_EDITOR: 'Remove an editor from a file owned by you',
+            REQ_DELETE_LINE: 'Remove a line from file'
             }
 # Responses--------------------------------------------------------------------
 RSP_OK = '0'
