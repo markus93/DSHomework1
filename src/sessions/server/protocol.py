@@ -218,7 +218,7 @@ def edit_line(user, fname, line_no, line_content, is_new_line=False, **kwargs):
         LOG.warning('{0} was trying to access {1} without permissions'.format(user, fname))
         raise ServerException('Don\'t have rights to access {0}'.format(fname))
 
-    if FILES[fname].locks.get(line_no, None) != user:
+    if not is_new_line and FILES[fname].locks.get(line_no, None) != user:
         LOG.warning('{0} was trying to edit {1} without locking a line'.format(user, fname))
         raise ServerException('Don\'t have lock on line {0}'.format(line_no))
 
