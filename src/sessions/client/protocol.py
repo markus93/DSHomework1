@@ -351,6 +351,25 @@ def lock_line_req(srv, user, fname, line_no):
     return err, lock
 
 
+def delete_line_req(srv, user, fname, line_no):
+    """
+    Requests deleting a line of given file
+    @param srv: server socket address
+    @type srv: (str, int)
+    @param user: username
+    @type user: str
+    @param fname: filename
+    @type fname: str
+    @param line_no: line number
+    @type line_no: int
+    """
+
+    args = {'user': user, 'fname': fname, 'line_no': line_no}
+    err, _, _ = __handle_request(srv, args, REQ_DELETE_LINE)
+
+    return err
+
+
 class listen_for_edits(Thread):
 
     def __init__(self, srv, sock, q):

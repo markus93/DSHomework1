@@ -144,7 +144,7 @@ def send_new_edit(user, fname, line_no, line_content, is_new_line=False):
 
 def lock_line(user, fname, line_no):
     """
-
+    Try to lock line with given number
     @param user:
     @type user: str
     @param fname:
@@ -155,6 +155,21 @@ def lock_line(user, fname, line_no):
     @rtype: (str, bool)
     """
     return lock_line_req(server, user, fname, line_no)
+
+def delete_line(user, fname, line_no):
+    """
+    Delete line with given number
+    @param user:
+    @type user: str
+    @param fname:
+    @type fname: str
+    @param line_no:
+    @type line_no: int
+    @return: err_description
+    @rtype: str
+    """
+
+    return delete_line_req(server, user, fname, line_no)
 
 
 def stop_listening():

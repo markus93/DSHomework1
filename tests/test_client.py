@@ -162,14 +162,28 @@ class ClientTests(TestCase):
         self.assertEqual(status, "Must be owner to see editors")
 
     # Test sending line changes
-    def test_edit_line(self):
+    def _test_edit_line(self):
         create_file('user1', 'file1')
         lock_line('user1', 'file1', 0)
         status = send_new_edit('user1', 'file1', 0, 'new line!')
         self.assertEqual(status, "")
         status, content, _ = open_file('user1', 'file1')
-        #print "Status " + status + " content: " + content
+        print "Status " + status + " content: " + content
+        self.assertEqual(content, "new line!\n")  # TODO Should there be \n in the end
 
+        stop_listening()
+
+    # Test line deleting
+    def test_delete_line(self):
+        create_file('user1', 'file1')
+        lock_line('user1', 'file1', 0)
+        send_new_edit('user1', 'file1', 0, 'new line!')
+        status = delete_line('user1', 'file1', 0)
+        self.assertEqual(status, "")
+
+        status, content, _ = open_file('user1', 'file1')
+        self.assertEqual(content, "")
+        stop_listening()
 
 
     def tearDown(self):
