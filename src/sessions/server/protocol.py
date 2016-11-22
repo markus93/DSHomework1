@@ -4,7 +4,7 @@ import pickle
 import socket
 import os
 from Queue import Queue, Empty
-from threading import Thread
+from threading import Thread, RLock
 
 from sessions.common import *
 
@@ -16,6 +16,7 @@ FILES = dict()
 """@type: dict[str, FileHandler]"""
 USERS = dict()
 """@type: dict[str, User]"""
+LINE_LOCK_LOCK = RLock()  # This is a good name!
 
 
 def client_handler(client_socket):
@@ -177,6 +178,8 @@ def acquire_lock(user, fname, line_no, **kwargs):
     @rtype: dict[str, bool]
     """
 
+    LINE_LOCK_LOCK.acquire()
+
     if FILES[fname].owner != user and user not in FILES[fname].users:
         LOG.warning('{0} was trying to access {1} without permissions'.format(user, fname))
         raise ServerException('Don\'t have rights to access {0}'.format(fname))
@@ -189,6 +192,9 @@ def acquire_lock(user, fname, line_no, **kwargs):
 
     FILES[fname].locks[line_no] = user
     LOG.info('{0} acquired a lock in {1} for line {2}'.format(user, fname, line_no))
+
+    LINE_LOCK_LOCK.release()
+
     return {'lock': True}
 
 
@@ -287,6 +293,32 @@ def delete_file(user, fname, **kwargs):
 
     os.remove(DIRECTORY_FILES + os.sep + fname)
     del FILES[fname]
+
+    return {}
+
+
+def delete_line(user, fname, line_no, **kwargs):
+    """Remove a line from file
+    @param user:
+    @type user: str
+    @param fname:
+    @type fname: str
+    @param line_no:
+    @type line_no: int
+    @return:
+    @rtype:
+    """
+
+    if FILES[fname].owner != user and user not in FILES[fname].users:
+        LOG.warning('{0} was trying to access {1} without permissions'.format(user, fname))
+        raise ServerException('Don\'t have rights to access {0}'.format(fname))
+
+    if FILES[fname].locks.get(line_no, None) != user:
+        LOG.warning('{0} was trying to edit {1} without locking a line'.format(user, fname))
+        raise ServerException('Don\'t have lock on line {0}'.format(line_no))
+
+    FILES[fname].file_changes.put((line_no, None, False, user))
+    LOG.info('File change request was made by {0} for {1}'.format(user, fname))
 
     return {}
 
@@ -392,13 +424,25 @@ class FileHandler(Thread):
                 with open(os.sep.join((DIRECTORY_FILES, self.fname)), 'r+') as f:
                     lines = f.readlines()
 
-                    if is_new_line:
+                    if line_content is None:
+                        lines.remove(line_no)
+
+                        # Update locks
+                        LINE_LOCK_LOCK.acquire()
+                        for key in sorted(self.locks.keys()):
+                            if key >= line_no:
+                                self.locks[key - 1] = self.locks.pop(key)
+                        LINE_LOCK_LOCK.release()
+
+                    elif is_new_line:
                         lines.insert(line_no-1, line_content)
 
                         # Update locks
+                        LINE_LOCK_LOCK.acquire()
                         for key in sorted(self.locks.keys(), reverse=True):
-                            if key <= line_no:
+                            if key >= line_no:
                                 self.locks[key + 1] = self.locks.pop(key)
+                        LINE_LOCK_LOCK.release()
 
                     else:
                         try:
@@ -441,12 +485,14 @@ class FileHandler(Thread):
         """
 
         # Release the lock
+        LINE_LOCK_LOCK.acquire()
         for line_no, lock_owner in self.locks.items():
             if user == lock_owner:
                 LOG.info("{0} released lock on line {1} in file {2}".format(lock_owner, line_no, self.fname))
                 del self.locks[line_no]
+                LINE_LOCK_LOCK.release()
                 return True
-
+        LINE_LOCK_LOCK.release()
         return False
 
 
@@ -462,6 +508,7 @@ REQUESTS = {
     REQ_GET_LOCK: (acquire_lock, ['user', 'fname', 'line_no']),
     REQ_EDIT_FILE: (edit_line, ['user', 'fname', 'line_no', 'line_content']),
     REQ_ADD_EDITOR: (add_editor, ['user', 'fname', 'editor']),
-    REQ_REMOVE_EDITOR: (remove_editor, ['user', 'fname', 'editor'])
+    REQ_REMOVE_EDITOR: (remove_editor, ['user', 'fname', 'editor']),
+    REQ_DELETE_LINE: (delete_line, ['user', 'fname', 'line_no'])
 }
 """@type: dict[str, ((dict[str, str|int|bool|list[str]]) -> dict[str, str|bool|list[str]], list[str])]"""
