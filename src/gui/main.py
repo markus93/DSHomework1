@@ -305,6 +305,10 @@ class TextFrame(Tkinter.Frame, object):
         if self.textarea.tag_ranges(Tkinter.SEL):
             return 'break'
 
+        # in case line is locked by other user do not erase
+        if self.lock != self.line_no:
+            return 'break'
+
         prev_line_no = self.line_no
 
         if prev_line_no == 1:
