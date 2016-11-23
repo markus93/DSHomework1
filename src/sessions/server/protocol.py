@@ -188,6 +188,7 @@ def acquire_lock(user, fname, line_no, **kwargs):
 
     if FILES[fname].locks.get(line_no, user) != user:
         LOG.info('{0} failed to acquire a lock in {1} for line {2}'.format(user, fname, line_no))
+        LINE_LOCK_LOCK.release()
         return {'lock': False}
 
     FILES[fname].release_lock(user)
