@@ -445,7 +445,7 @@ class EditsListener(threading.Thread):
                         self.text_frame.lock -= 1
                     continue
 
-                line_content = line_content.strip()
+                line_content = line_content.rstrip('\n')
                 if is_new_line:
                     self.text_frame.textarea.insert(str(float(line_no)), line_content + '\n')
 
