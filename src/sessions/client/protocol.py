@@ -77,11 +77,10 @@ def __request(srv, r_type, args, sock):
         n = tcp_send(sock, type=r_type, **args)
     except soc_err as e:
         # In case we failed in the middle of transfer we should report error
-        LOG.error('Interrupted sending the data to %s:%d, ' \
-                  'error: %s' % (sock + (e,)))
+        LOG.error('Interrupted sending the data to ' + str(sock) + ", error: " + str(e))
         # ... and close socket
         disconnect(sock)
-        return RSP_ERRTRANSM, [str(e)]
+        return {'status': RSP_ERRTRANSM, 'error_message': str(e)}
 
     LOG.info('Sent [%s] request, total bytes sent [%d]' \
              '' % (CTR_MSGS[r_type], n))
@@ -95,7 +94,7 @@ def __request(srv, r_type, args, sock):
                   'error: %s' % (srv + (e,)))
         # ... and close socket
         disconnect(sock)
-        return RSP_ERRTRANSM, [str(e)]
+        return {'status': RSP_ERRTRANSM, 'error_message': str(e)}
 
     LOG.debug('Received response [%d bytes] in total' % len(rsp))
 
@@ -156,10 +155,14 @@ def __handle_request(srv, args, r_type, end_connection=True):
     # Disconnects from server
     if end_connection:
 
-        sock.shutdown(SHUT_RDWR)  # Shutdown connection
+        try:
 
-        # Disconnect from server
-        disconnect(sock)
+            sock.shutdown(SHUT_RDWR)  # Shutdown connection
+
+            # Disconnect from server
+            disconnect(sock)
+        except soc_err as e:
+            LOG.error(str(e))
 
         return err, response, None
     else:

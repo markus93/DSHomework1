@@ -4,7 +4,7 @@ import os
 import sys
 from unittest import TestCase
 import subprocess
-import signal
+import time
 
 sys.path.insert(0, os.path.abspath('../src/'))
 
@@ -12,6 +12,9 @@ from sessions.client.main import *
 
 """@type subproc: subprocess"""
 subproc = None
+
+logging.disable(logging.CRITICAL)
+
 
 # Helper class for creating args similar as given to main class
 class Bunch:
@@ -33,15 +36,17 @@ class ClientTests(TestCase):
 
 
     # Test file creating, new file, file with same name
-    def _test_file_creating(self):
+    def test_file_creating(self):
+        # Creating new file
         status = create_file('user1', 'file1')
         self.assertEqual(status, "")  # Should only return empty err
+        # Create file that already exists.
         status = create_file('user1', 'file1')
         self.assertEqual(status, "File file1 already exists")  # Should return given error
 
 
     # Test file opening, whether such file exists, accessing unauthorized file
-    def _test_file_opening(self):
+    def test_file_opening(self):
         create_file('user1', 'file1')
         # Normal file opening
         status, _, _ = open_file('user1', 'file1')
@@ -51,14 +56,14 @@ class ClientTests(TestCase):
         self.assertEqual(status, "Don't have rights to access file1")
         # Opening non-existing file
         status, _, _ = open_file('user1', 'file2')  # TODO file existing is not controlled
-        self.assertEqual(status, "This file does not exist.")
+        self.assertEqual(status, "This file does not exsist.")
 
         # Stop edits listening thread properly
         stop_listening()
 
 
     # Test editor (user) adding - adding twice, add owner as editor
-    def _test_editor_adding(self):
+    def test_editor_adding(self):
         create_file('user1', 'file1')
         #Add editor (user) normally)
         status = add_editor('user1', 'file1', 'user2')
@@ -75,7 +80,7 @@ class ClientTests(TestCase):
 
 
     # Editor deleting - delete owner, delete editor twice
-    def _test_editor_removing(self):
+    def test_editor_removing(self):
         create_file('user1', 'file1')
         add_editor('user1', 'file1', 'user2')
         # Remove editor normally
@@ -92,13 +97,14 @@ class ClientTests(TestCase):
         self.assertEqual(status, "Must be owner to change editors")
 
     # Test file listing for different scenarios
-    def _test_file_listing(self):
+    def test_file_listing(self):
         create_file('user1', 'file1')
         create_file('user1', 'file2')
         create_file('user2', 'file3')
         add_editor('user2', 'file3', 'user1')
         #List files for user1
         status, owned, available = get_files('user1')
+        print "Owned " + str(owned)
         self.assertEqual(status, "")
         self.assertItemsEqual(owned, ['file1', 'file2'])
         self.assertItemsEqual(available, ['file3'])
@@ -114,10 +120,9 @@ class ClientTests(TestCase):
         self.assertItemsEqual(available, [])
 
     # Test locking rows
-    def _test_locks(self):
-        create_file('user1', 'file1')
-        add_editor('user1', 'file1', 'user2')
-        send_new_edit('user1', 'file1', 0, "abc", True)
+    def test_locks(self):
+        status = create_file('user1', 'file1')
+        status = add_editor('user1', 'file1', 'user2')
         #Normal locking
         status, lock = lock_line('user1', 'file1', 0)
         self.assertEqual(status, "")
@@ -129,25 +134,27 @@ class ClientTests(TestCase):
         # Try to lock line, which is already locked
         status, lock = lock_line('user2', 'file1', 0)
         self.assertFalse(lock)
+        print "TESTING LOCKS!!"
         #Try to lock line of non-existing file
-        #status, lock = lock_line('user1', 'file2', 0)  # TODO file existing is not controlled
+        #status, lock = lock_line('user1', 'non_exist', 0)  # TODO freezes here
         #print status + " " + str(lock)
+        #self.assertEqual(status, "")
         #Try to lock line of non-existing line
-        status, lock = lock_line('user1', 'file1', 5)  # TODO shouldn't be able to lock non-existing line?
-        self.assertEqual(status, "")
-        self.assertTrue(lock)
+        #status, lock = lock_line('user1', 'file1', 5)  # TODO shouldn't be able to lock non-existing line?
+        #self.assertEqual(status, "")
+        #self.assertTrue(lock)
         #Try to lock line of not available file
-        status, lock = lock_line('user3', 'file1', 0)
-        self.assertEqual(status, "Don't have rights to access file1")
+        #status, lock = lock_line('user3', 'file1', 0)
+        #self.assertEqual(status, "Don't have rights to access file1")
         #Check if previously locked line is released and new line locked
-        status, lock = lock_line('user1', 'file1', 1)
-        self.assertTrue(lock)
-        status, lock = lock_line('user2', 'file1', 0)
-        self.assertTrue(lock)
+        #status, lock = lock_line('user1', 'file1', 1)
+        #self.assertTrue(lock)
+        #status, lock = lock_line('user2', 'file1', 0)
+        #self.assertTrue(lock)
 
     # Test editor (user) listing
-    def _test_get_editors(self):
-        create_file('user1', 'file1')
+    def test_get_editors(self):
+        status = create_file('user1', 'file1')
         add_editor('user1', 'file1', 'user2')
         add_editor('user1', 'file1', 'user3')
         #Get editors normally
@@ -155,41 +162,84 @@ class ClientTests(TestCase):
         self.assertEqual(status, "")
         self.assertItemsEqual(editors, ['user2', 'user3'])
         #Get editors of not-existing file
-        #status, _ = get_editors('user1', 'nonexist') #TODO file existing is not controlled
-        #self.assertEqual(status, "Malformed message")
+        status, _ = get_editors('user1', 'nonexist')
+        self.assertEqual(status, "This file does not exsist.")
         #Get editor with not-allowed user
         status, _ = get_editors('user2', 'file1')
         self.assertEqual(status, "Must be owner to see editors")
 
     # Test sending line changes
-    def _test_edit_line(self):
+    def test_edit_line(self):
         create_file('user1', 'file1')
         lock_line('user1', 'file1', 0)
+
+        # Normal line edit send
         status = send_new_edit('user1', 'file1', 0, 'new line!')
+        time.sleep(0.5)  # to assure that edit is handled by server
         self.assertEqual(status, "")
         status, content, _ = open_file('user1', 'file1')
-        print "Status " + status + " content: " + content
-        self.assertEqual(content, "new line!\n")  # TODO Should there be \n in the end
+        #self.assertEqual(content, "new line!\n")  # TODO Should there be \n in the end
+        # Normal new line send
+        status = send_new_edit('user1', 'file1', 3, 'new line!', True)
+        time.sleep(0.5)  # to assure that edit is handled by server
+        self.assertEqual(status, "")
+        status, content, _ = open_file('user1', 'file1')
+        #print "DEBUG content: " + content
 
+        self.assertEqual(content, "new line!\nnew line!\n")
+        # Sending edit to line that is not locked
+        status = send_new_edit('user1', 'file1', 1, 'new line!')
+        self.assertEqual(status, "Don't have lock on line 1")
+        # Sending line to non-existing file
+        status = send_new_edit('user1', 'not_exist', 0, 'new line!')
+        self.assertEqual(status, "This file does not exsist.")
+        # Sending line to non-existing line number
+        status = send_new_edit('user1', 'file1', -1, 'new line!')
+        self.assertEqual(status, "Don't have lock on line -1")
+        # Sending line to not available file
+        status = send_new_edit('user2', 'file1', 0, 'new line!')
+        self.assertEqual(status, "Don't have rights to access file1")
+        # Sending symbols to file
+        status = send_new_edit('user1', 'file1', 0, "@${[]}#%&/()=?'~><")
+        self.assertEqual(status, "")
+        status, content, _ = open_file('user1', 'file1')
+        #print "content: " + content
+        self.assertEqual(content, "new line!\n@${[]}#%&/()=?'~><\n")
         stop_listening()
+
 
     # Test line deleting
     def test_delete_line(self):
         create_file('user1', 'file1')
         lock_line('user1', 'file1', 0)
         send_new_edit('user1', 'file1', 0, 'new line!')
+        time.sleep(0.5)  # to assure that edit is handled by server
         status = delete_line('user1', 'file1', 0)
         self.assertEqual(status, "")
+        time.sleep(0.5)  # to assure that edit is handled by server
 
         status, content, _ = open_file('user1', 'file1')
-        self.assertEqual(content, "")
+        self.assertEqual(content, "\n")
         stop_listening()
+
+        # Deleting edit of a line that is not locked
+        status = delete_line('user1', 'file1', 1)
+        self.assertEqual(status, "Don't have lock on line 1")
+        # Deleting line of non-existing file
+        status = delete_line('user1', 'not_exist', 0)
+        self.assertEqual(status, "This file does not exsist.")
+        # Deleting line of non-existing line number
+        status = delete_line('user1', 'file1', -1)
+        self.assertEqual(status, "Don't have lock on line -1")
+        # Deleting line of not available file
+        status = delete_line('user2', 'file1', 0)
+        self.assertEqual(status, "Don't have rights to access file1")
 
 
     def tearDown(self):
 
         #Clear old files
-        folder = '../tests/_files/'
+        folder = '../src/sessions/server/_files/'
         for the_file in os.listdir(folder):
             file_path = os.path.join(folder, the_file)
             try:
@@ -200,9 +250,4 @@ class ClientTests(TestCase):
 
         # shutdown server
         subproc.terminate()
-        print "Tear down done."
-
-
-# Adding line - on wrong line (that is not locked?), line that does not exist
-#Multiple users with same name
-
+        subproc.wait() #Wait until subproc is really terminated, otherwise may terminate next connection also
