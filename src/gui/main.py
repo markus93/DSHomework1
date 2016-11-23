@@ -79,13 +79,16 @@ class RootWindow(Tkinter.Tk, object):
         self.text_frame.pack(fill=Tkinter.BOTH)
 
         self.edits_listener = EditsListener(queue, self.text_frame)
-
+        self.text_frame._is_running = True  # Periodic updates are ready to run
         self.text_frame.open(self.username, fname)
+        self.wm_title('Colted - {0}'.format(fname))  # Set file name as a title
 
     def close_file(self):
         self.edits_listener._is_running = False
         self.text_frame._is_running = False
         stop_listening()
+
+        self.wm_title('Colted - {0}'.format(self.username))
 
         self.text_frame.pack_forget()
         self.main_frame.pack(fill=Tkinter.BOTH)
