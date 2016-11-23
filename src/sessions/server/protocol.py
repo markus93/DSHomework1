@@ -56,8 +56,13 @@ def client_handler(client_socket):
             LOG.warning('Exception happened during handling the request: {0}'.format(e.message))
             tcp_send(client_socket, status=RSP_BADFORMAT, error_message='This file does not exsist.')
         except Exception as e:
-            LOG.warning('Unknown exception happened during handling the request: {0}'.format(e.message))
+            LOG.error('Unknown exception happened during handling the request: {0}'.format(e.message))
             tcp_send(client_socket, status=RSP_BADFORMAT, error_message=e.message)
+        finally:
+            try:
+                LINE_LOCK_LOCK.release()
+            except RuntimeError:
+                pass
 
         if request['type'] == REQ_GET_FILE:
             # Keep the connection open
@@ -188,7 +193,6 @@ def acquire_lock(user, fname, line_no, **kwargs):
 
     if FILES[fname].locks.get(line_no, user) != user:
         LOG.info('{0} failed to acquire a lock in {1} for line {2}'.format(user, fname, line_no))
-        LINE_LOCK_LOCK.release()
         return {'lock': False}
 
     FILES[fname].release_lock(user)
