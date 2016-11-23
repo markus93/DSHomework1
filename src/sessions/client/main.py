@@ -43,7 +43,7 @@ def get_files(user):
 
 
 def get_editors(user, fname):
-    """Get files owned by user and available for user.
+    """Get editors of selected file.
     @param user: username
     @type user: str
     @param fname:
@@ -155,6 +155,7 @@ def lock_line(user, fname, line_no):
     @rtype: (str, bool)
     """
     return lock_line_req(server, user, fname, line_no)
+
 
 def delete_line(user, fname, line_no):
     """

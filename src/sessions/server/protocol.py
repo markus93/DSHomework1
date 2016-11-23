@@ -43,7 +43,6 @@ def client_handler(client_socket):
 
                 if not check_request_format(request, *required_fields):
                     tcp_send(client_socket, status=RSP_BADFORMAT)
-
                 else:
                     tcp_send(client_socket, status=RSP_OK, **request_handler(**request))
 
@@ -313,12 +312,12 @@ def delete_line(user, fname, line_no, **kwargs):
         LOG.warning('{0} was trying to access {1} without permissions'.format(user, fname))
         raise ServerException('Don\'t have rights to access {0}'.format(fname))
 
-    if FILES[fname].locks.get(line_no, None) != user:
+    if FILES[fname].locks.get(line_no, None) is not None: # This has to be None
         LOG.warning('{0} was trying to edit {1} without locking a line'.format(user, fname))
         raise ServerException('Don\'t have lock on line {0}'.format(line_no))
 
     FILES[fname].file_changes.put((line_no, None, False, user))
-    LOG.info('File change request was made by {0} for {1}'.format(user, fname))
+    LOG.info('A line was deleted by {0} in {1}'.format(user, fname))
 
     return {}
 
@@ -425,7 +424,7 @@ class FileHandler(Thread):
                     lines = f.readlines()
 
                     if line_content is None:
-                        lines.remove(line_no)
+                        lines.pop(line_no-1)
 
                         # Update locks
                         LINE_LOCK_LOCK.acquire()
@@ -445,14 +444,12 @@ class FileHandler(Thread):
                         LINE_LOCK_LOCK.release()
 
                     else:
-                        try:
-                            lines[line_no-1] = line_content
-                        except IndexError:
-                            LOG.warning(
-                                '{0} tried to edit line {1} in {2}, but the file doesn\'t have that many lines'.format(
-                                    editor, line_no, self.fname))
-                            # Don't notify users nor update the file
-                            continue
+                        i = len(lines)
+                        while i < line_no:
+                            lines.append('\n')
+                            i += 1
+
+                        lines[line_no-1] = line_content
 
                     f.seek(0)
                     f.truncate()
@@ -465,7 +462,7 @@ class FileHandler(Thread):
                         USERS[user_name].notifications.put((line_no, line_content, is_new_line))
 
             except Empty:
-                # LOG.debug('Empty queue at file {0}'.format(self.fname))
+                #LOG.debug('Empty queue at file {0}'.format(self.fname))
                 pass
 
         # Save the FileHandler

@@ -188,7 +188,7 @@ def get_files_req(srv, user):
         owned_files = response['owned_files']
         available_files = response['available_files']
     else:
-        return err, None, None
+        return err, [], []
 
     return err, owned_files, available_files
 
@@ -349,7 +349,7 @@ def lock_line_req(srv, user, fname, line_no):
     if err == "":
         lock = response['lock']
     else:
-        lock = None
+        lock = False
 
     return err, lock
 
@@ -394,7 +394,6 @@ class listen_for_edits(Thread):
 
         self._is_running = True
 
-
     def run(self):
 
         LOG.debug("Started listening for edits")
@@ -422,8 +421,12 @@ class listen_for_edits(Thread):
                 # Add tuple (line number, line content) to the queue
                 line_no = rsp['line_no']
                 line_content = rsp['line_content']
-                self.q.put((line_no, line_content))
-                LOG.debug(str(line_no) + " " + line_content)
+                is_new_line = rsp['is_new_line']
+                self.q.put((line_no, line_content, is_new_line))
+                try:
+                    LOG.debug(str(line_no) + " " + line_content)
+                except TypeError:
+                    LOG.debug(str(line_no) + " " + 'deleted')
 
             else:
                 if err in ERR_MSGS.keys():

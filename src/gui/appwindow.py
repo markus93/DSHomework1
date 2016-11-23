@@ -75,8 +75,13 @@ class app:
 
         currentfile = filename
 
-        textPad.bind('<Key>', self.new_line)
+        textPad.bind('<Up>', self.new_line)
+        textPad.bind('<Down>', self.new_line)
+        textPad.bind('<BackSpace>', self.new_line)
+        textPad.bind('<Return>', self.new_line)
+
         textPad.bind('<Return>', self.send)
+        threading.Timer(2, self.send).start()
 
     def new_line(self, event):
         index = textPad.index(INSERT)

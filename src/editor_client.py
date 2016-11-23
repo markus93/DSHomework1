@@ -37,4 +37,4 @@ if __name__ == '__main__':
     initialize(args)
 
     # Run Colted GUI
-    main()
+    main.main()
