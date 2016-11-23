@@ -424,7 +424,7 @@ class EditsListener(threading.Thread):
 
                 if line_content is None:
                     self.text_frame.textarea.delete(str(float(line_no)), str(float(line_no+1)))
-                    if self.text_frame.lock is not None and self.text_frame.lock < line_no:
+                    if self.text_frame.lock is not None and self.text_frame.lock >= line_no:
                         self.text_frame.lock -= 1
                     continue
 
@@ -432,7 +432,7 @@ class EditsListener(threading.Thread):
                 if is_new_line:
                     self.text_frame.textarea.insert(str(float(line_no)), line_content + '\n')
 
-                    if self.text_frame.lock is not None and self.text_frame.lock < line_no:
+                    if self.text_frame.lock is not None and self.text_frame.lock >= line_no:
                         self.text_frame.lock += 1
                 else:
                     self.text_frame.textarea.delete(str(float(line_no)), str(line_no) + '.end')
