@@ -152,6 +152,8 @@ class MainFrame(Tkinter.Frame, object):
         Tkinter.Label(self, text='Other files:').grid(row=13, column=0)
         self.other_files_listbox = Tkinter.Listbox(self, selectmode=Tkinter.SINGLE)
         self.other_files_listbox.grid(row=14, column=0, rowspan=10)
+        self.other_files_listbox.bind('<<ListboxSelect>>', self.other_files_listbox_onselect)
+
 
         Tkinter.Button(self, text="Open selected file", command=self.open_file).grid(row=25, column=0)
 
@@ -182,6 +184,12 @@ class MainFrame(Tkinter.Frame, object):
 
         except (KeyError, IndexError):
             pass
+
+    def other_files_listbox_onselect(self, event):
+        w = event.widget
+        index = int(w.curselection()[0])
+        self.refresh_files()
+        self.other_files_listbox.select_set(index) #Select item selected before refreshing
 
     def refresh_files(self):
 
