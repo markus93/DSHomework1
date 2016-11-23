@@ -15,6 +15,6 @@ RUNNING THE APPLICATION !!!!!!
 	(in order to get help use -h)
 
 2. Running unit tests for server and client
- (assuming your current directory is "DSHomework1/tests")
+ (assuming your current directory is "DSHomework1/tests"). Note while testing make sure that there are no active servers on local host.
 	python2.7 -m unittest test_server
 	python2.7 -m unittest test_client

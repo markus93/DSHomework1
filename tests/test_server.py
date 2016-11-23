@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.abspath('../src/'))
 
 from sessions.server.main import *
 
-# No need to log turing testing
+# No need to log during testing
 logging.disable(logging.CRITICAL)
 
 
