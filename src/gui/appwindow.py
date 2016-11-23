@@ -46,7 +46,7 @@ class app:
         textPad.configure(yscrollcommand=sb.set)
         sb.pack(side="left", fill="y")
         textPad.pack(side="right", fill="both", expand=True)
-        textPad.tag_configure("locked", foreground="grey")
+   
         window.protocol("WM_DELETE_WINDOW", self.on_closing)
         window.mainloop()
 
