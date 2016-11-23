@@ -187,9 +187,14 @@ class MainFrame(Tkinter.Frame, object):
 
     def other_files_listbox_onselect(self, event):
         w = event.widget
-        index = int(w.curselection()[0])
+        try:
+            index = int(w.curselection()[0])
+        except IndexError:
+            index = -1
+
         self.refresh_files()
-        self.other_files_listbox.select_set(index) #Select item selected before refreshing
+        if index != -1:
+            self.other_files_listbox.select_set(index) #Select item selected before refreshing
 
     def refresh_files(self):
 
@@ -375,6 +380,10 @@ class TextFrame(Tkinter.Frame, object):
         if self.line_no == self.lock:
             self.send_new_edit()
 
+        if self.line_no+1 == int(self.textarea.index('end').split('.')[0]):
+            self.textarea.insert(Tkinter.END, '\n')
+            self.textarea.see(Tkinter.END)
+
         self.lock_line(self.line_no + 1)
 
     def lock_line(self, line_no):
@@ -447,7 +456,15 @@ class EditsListener(threading.Thread):
 
                 line_content = line_content.rstrip('\n')
                 if is_new_line:
-                    self.text_frame.textarea.insert(str(float(line_no)), line_content + '\n')
+                    # Check whether new line addded in the last line of document
+                    last_line = int(self.text_frame.textarea.index('end').split('.')[0])
+                    print line_no
+                    print last_line
+                    if last_line < line_no+1:
+                        self.text_frame.textarea.insert(str(line_no-1) + '.end', '\n')
+                        self.text_frame.textarea.insert(str(float(line_no)), line_content)
+                    else:
+                        self.text_frame.textarea.insert(str(float(line_no)), line_content + '\n')
 
                     if self.text_frame.lock is not None and self.text_frame.lock >= line_no:
                         self.text_frame.lock += 1
