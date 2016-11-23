@@ -10,7 +10,7 @@ import logging
 # Logging----------------------------------------------------------------------
 
 FORMAT = '%(asctime)-15s %(levelname)s %(message)s'
-logging.basicConfig(level=logging.NOTSET, format=FORMAT)  # Log only errors
+logging.basicConfig(level=logging.CRITICAL, format=FORMAT)  # Log only errors
 LOG = logging.getLogger()
 
 # TCP related constants -------------------------------------------------------
