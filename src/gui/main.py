@@ -11,6 +11,10 @@ import time
 def main():
     root = RootWindow()
     root.mainloop()
+    try:
+        root.close_file()
+    except (AttributeError, Tkinter.TclError):
+        pass
 
 
 class RootWindow(Tkinter.Tk, object):
@@ -39,7 +43,6 @@ class RootWindow(Tkinter.Tk, object):
 
         if error != "":
             tkMessageBox.showerror('Error', error)
-
 
         return owned_files, other_files
 
@@ -82,6 +85,7 @@ class RootWindow(Tkinter.Tk, object):
     def close_file(self):
         self.edits_listener._is_running = False
         self.text_frame._is_running = False
+        stop_listening()
 
         self.text_frame.pack_forget()
         self.main_frame.pack(fill=Tkinter.BOTH)
