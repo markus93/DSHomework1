@@ -348,6 +348,8 @@ class TextFrame(Tkinter.Frame, object):
             send_new_edit(self.user, self.fname, line_no + 1, part_2, True)
             time.sleep(0.1) # A hack
             self.lock_line(line_no+1)
+        else:
+            return 'break'
 
     def move_lr(self, event):
         self.lock_line(self.line_no)
